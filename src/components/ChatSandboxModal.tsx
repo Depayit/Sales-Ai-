@@ -12,6 +12,7 @@ import {
   FileCheck,
   Check,
   Info,
+  Image as ImageIcon,
 } from 'lucide-react';
 import type { PriceTier } from '../types';
 
@@ -20,6 +21,7 @@ export interface SandboxMessage {
   sender: 'ai' | 'customer' | 'sales';
   time: string;
   text?: string;
+  imageUrl?: string;
   cardType?: 'text' | 'map' | 'product_pricing' | 'doc_request' | 'doc_upload' | 'order_summary' | 'sales_handoff';
   cardData?: {
     mapTitle?: string;
@@ -64,6 +66,9 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
   // Messages array - INITIALLY EMPTY as requested
   const [messages, setMessages] = useState<SandboxMessage[]>([]);
   const [inputText, setInputText] = useState('');
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageName, setSelectedImageName] = useState<string | null>(null);
+  const [previewImageModal, setPreviewImageModal] = useState<string | null>(null);
   const [isAiTyping, setIsAiTyping] = useState(false);
   const [currentStage, setCurrentStage] = useState<ConversationStage>('INITIAL');
   const [customerContext, setCustomerContext] = useState<{
@@ -89,6 +94,7 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -108,6 +114,8 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
   const handleClearChat = () => {
     setMessages([]);
     setInputText('');
+    setSelectedImage(null);
+    setSelectedImageName(null);
     setIsAiTyping(false);
     setCurrentStage('INITIAL');
     setCustomerContext({});
@@ -116,8 +124,35 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
     setTimeout(() => setClearToast(false), 2000);
   };
 
+  // Device image selection handler
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      alert('กรุณาเลือกไฟล์รูปภาพเท่านั้น');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const result = event.target?.result as string;
+      if (result) {
+        setSelectedImage(result);
+        setSelectedImageName(file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  };
+
+  const handleRemoveSelectedImage = () => {
+    setSelectedImage(null);
+    setSelectedImageName(null);
+  };
+
   // Autonomous AI Bot Logic according to Slide 3, 6, 8, 13, 17, 21, 29
-  const processCustomerMessageWithAI = (userText: string) => {
+  const processCustomerMessageWithAI = (userText: string, attachedImage?: string) => {
     const text = userText.trim().toLowerCase();
     const nowTime = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
@@ -147,12 +182,12 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
       const hasRibs = text.includes('ซี่โครง') || text.includes('กระดูกหมู');
       const hasQty = text.includes('กก') || text.includes('กิโล') || text.includes('โล') || /\d+/.test(text);
 
-      // 3. Detect Documents / CV / Confirmation
-      const hasDocs = text.includes('บัตร') || text.includes('บัตรประชาชน') || text.includes('หนังสือรับรอง') || text.includes('โลเคชัน') || text.includes('พิกัด') || text.includes('maps');
+      // 3. Detect Documents / CV / Confirmation or Attached Image
+      const hasDocs = text.includes('บัตร') || text.includes('บัตรประชาชน') || text.includes('หนังสือรับรอง') || text.includes('โลเคชัน') || text.includes('พิกัด') || text.includes('maps') || (Boolean(attachedImage) && (currentStage === 'CV_REQUESTED' || text.includes('เอกสาร') || text.includes('บัตร') || text.includes('รูป')));
       const isConfirming = text.includes('ยืนยัน') || text.includes('สั่งเลย') || text.includes('เปิด cv') || text.includes('เปิดรหัส') || text.includes('ตกลง') || text.includes('เอาเลย');
 
       // STATE MACHINE DECISION LOGIC:
-      if (hasDocs || currentStage === 'CV_REQUESTED') {
+      if (hasDocs || currentStage === 'CV_REQUESTED' || (Boolean(attachedImage) && currentStage === 'PRODUCT_PRESENTED')) {
         // STEP 5 & 6: Customer provided documents or confirmation
         newStage = 'ORDER_FINALIZED';
         setCustomerContext((prev) => ({ ...prev, hasDocuments: true }));
@@ -160,12 +195,14 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
         reasoning = {
           ruleTriggered: '04 & 05 JD หลัก: AI ตรวจความครบถ้วน ร่างคำขอเปิด CV และส่งสรุปออเดอร์เข้า LINE ทีมขาย',
           stage: '05 & 06 ยืนยันคำสั่งซื้อ + ส่งต่อทีมขาย',
-          detectedIntent: 'ส่งเอกสารเปิด CV / ยืนยันข้อมูล',
+          detectedIntent: attachedImage ? 'ส่งรูปภาพเอกสารยืนยันตัวตนเปิด CV' : 'ส่งเอกสารเปิด CV / ยืนยันข้อมูล',
           decisionRightRule: 'ฝ่ายขาย: ตรวจสต็อกนอกระบบ / ยืนยันยอดมัดจำจริง | AI ไม่รับปากวันจัดส่งแทนฝ่ายขาย',
           routeStatus: customerContext.isRegularRoute === false ? 'out_of_route' : 'in_route',
         };
 
-        aiText = `ขอบคุณมากค่ะ! AI ได้รับเอกสารและข้อมูลจัดส่งครบถ้วนเรียบร้อยแล้วค่ะ ✅\n\n📋 สรุปการดำเนินงาน:\n• รหัสคำขอเปิด CV ชั่วคราว: CUST-${new Date().getFullYear()}03-088\n• สถานะ: รวบรวมเอกสารครบ ส่งสรุปเข้า LINE กลุ่มฝ่ายขาย A&C\n• เงื่อนไขการชำระ: เก็บเงินปลายทาง (COD) / โอนเมื่อตรวจรับสินค้า\n\nเจ้าหน้าที่ฝ่ายขายประจำสายจะตรวจสอบสต็อกสินค้าและติดต่อกลับเพื่อยืนยันคำสั่งซื้อและวันรับสินค้าอย่างเป็นทางการค่ะ`;
+        aiText = attachedImage
+          ? `ขอบคุณมากค่ะ! AI ได้รับรูปภาพเอกสารจากอุปกรณ์ของคุณเรียบร้อยแล้วค่ะ ✅\n\n📋 สรุปการดำเนินงาน:\n• รหัสคำขอเปิด CV ชั่วคราว: CUST-${new Date().getFullYear()}03-088\n• สถานะ: เอกสารรูปภาพครบถ้วน ส่งสรุปเข้า LINE กลุ่มฝ่ายขาย A&C\n• เงื่อนไขการชำระ: เก็บเงินปลายทาง (COD) / โอนเมื่อตรวจรับสินค้า\n\nเจ้าหน้าที่ฝ่ายขายประจำสายจะตรวจสอบสต็อกสินค้าและติดต่อกลับเพื่อยืนยันคำสั่งซื้อและวันรับสินค้าอย่างเป็นทางการค่ะ`
+          : `ขอบคุณมากค่ะ! AI ได้รับเอกสารและข้อมูลจัดส่งครบถ้วนเรียบร้อยแล้วค่ะ ✅\n\n📋 สรุปการดำเนินงาน:\n• รหัสคำขอเปิด CV ชั่วคราว: CUST-${new Date().getFullYear()}03-088\n• สถานะ: รวบรวมเอกสารครบ ส่งสรุปเข้า LINE กลุ่มฝ่ายขาย A&C\n• เงื่อนไขการชำระ: เก็บเงินปลายทาง (COD) / โอนเมื่อตรวจรับสินค้า\n\nเจ้าหน้าที่ฝ่ายขายประจำสายจะตรวจสอบสต็อกสินค้าและติดต่อกลับเพื่อยืนยันคำสั่งซื้อและวันรับสินค้าอย่างเป็นทางการค่ะ`;
 
         cardType = 'order_summary';
         cardData = {
@@ -189,7 +226,7 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
           routeStatus: customerContext.isRegularRoute === false ? 'out_of_route' : 'in_route',
         };
 
-        aiText = `ยินดีอย่างยิ่งค่ะ! ทางเราจำหน่ายแบบขายส่งโดยตรงจากโรงเชือด A&C พร้อมส่งฟรีตามรอบรถห้องเย็นค่ะ\n\nก่อนเริ่มเปิดออเดอร์ รบกวนขอเอกสารและข้อมูลเปิดรหัสลูกค้า (CV) ดังนี้นะคะ:\n1. 🪪 รูปถ่ายบัตรประชาชน (เจ้าของ/ผู้มีอำนาจ)\n2. 🏢 หนังสือรับรองบริษัท (กรณีนิติบุคคล)\n3. 📍 ที่อยู่จัดส่ง หรือ ลิงก์พิกัด Google Maps\n4. 📞 ชื่อและเบอร์โทรศัพท์ผู้รับสินค้าหน้างานค่ะ`;
+        aiText = `ยินดีอย่างยิ่งค่ะ! ทางเราจำหน่ายแบบขายส่งโดยตรงจากโรงเชือด A&C พร้อมส่งฟรีตามรอบรถห้องเย็นค่ะ\n\nก่อนเริ่มเปิดออเดอร์ รบกวนขอเอกสารและข้อมูลเปิดรหัสลูกค้า (CV) ดังนี้นะคะ:\n1. 🪪 รูปถ่ายบัตรประชาชน (เจ้าของ/ผู้มีอำนาจ)\n2. 🏢 หนังสือรับรองบริษัท (กรณีนิติบุคคล)\n3. 📍 ที่อยู่จัดส่ง หรือ ลิงก์พิกัด Google Maps\n4. 📞 ชื่อและเบอร์โทรศัพท์ผู้รับสินค้าหน้างานค่ะ\n\n💡 *สามารถคลิกปุ่ม 📷 แทรกรูปจากอุปกรณ์ เพื่อแนบรูปถ่ายเอกสารหรือพิกัดหน้าร้านได้ทันทีค่ะ*`;
 
         cardType = 'doc_request';
         cardData = {
@@ -223,7 +260,7 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
         cardType = 'product_pricing';
         cardData = {
           productTitle: `${productName} (เกรดสด มาตรฐาน A&C)`,
-          productImage: '/assets/pork_belly.jpg',
+          productImage: attachedImage || '/assets/pork_belly.jpg',
           priceTiers: [
             { range: '1 - 199 กก.', pricePerKg: unitPrice + 24 },
             { range: '200 - 499 กก.', pricePerKg: unitPrice + 20 },
@@ -287,6 +324,19 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
           mapZone: `สายจัดส่งประจำ ${isKhonKaen ? 'R1' : isChiangMai ? 'R5' : 'R4'}`,
           mapDesc: `มีรอบรถห้องเย็นประจำทุกวัน${routeDays} ถึงหน้าร้านช่วงเช้า`,
         };
+      } else if (attachedImage && currentStage === 'INITIAL') {
+        // Attached image on initial contact
+        newStage = 'LOCATION_ASKED';
+
+        reasoning = {
+          ruleTriggered: '01 ขอบเขตหน้าที่ 1: ตรวจรับรูปภาพจากลูกค้าผ่าน LINE OA และสอบถามจังหวัด/พื้นที่ก่อน (Slide 3)',
+          stage: '01 รับภาพจากอุปกรณ์และขอจังหวัด/พื้นที่',
+          detectedIntent: 'ส่งรูปภาพจากอุปกรณ์ (เช่น รูปหน้าร้าน หรือตัวอย่างสินค้า)',
+          decisionRightRule: 'AI: รับข้อมูลลูกค้าผ่าน LINE OA ตรวจสอบจังหวัดและสอบถามความต้องการ',
+          routeStatus: undefined,
+        };
+
+        aiText = `สวัสดีค่ะ ยินดีต้อนรับสู่ A&C Foods Supply ค่ะ 😊\nAI ได้รับรูปภาพจากอุปกรณ์ของท่านเรียบร้อยแล้วค่ะ 📸\n\nเพื่อให้ข้อมูลรอบรถจัดส่งที่ถูกต้อง ไม่ทราบว่าร้านหรือจุดส่งของลูกค้าอยู่ จังหวัด และ อำเภอ อะไรคะ?`;
       } else {
         // INITIAL GREETING - Ask for location first (Slide 3 & 6)
         newStage = 'LOCATION_ASKED';
@@ -322,20 +372,25 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
 
   const handleSendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
-    if (!inputText.trim()) return;
+    if (!inputText.trim() && !selectedImage) return;
 
     const userText = inputText.trim();
+    const imageToSend = selectedImage;
+
     const userMsg: SandboxMessage = {
       id: `user-${Date.now()}`,
       sender: 'customer',
       time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-      text: userText,
+      text: userText || (imageToSend ? 'แนบรูปภาพจากอุปกรณ์' : ''),
+      imageUrl: imageToSend || undefined,
     };
 
     setMessages((prev) => [...prev, userMsg]);
     setInputText('');
+    setSelectedImage(null);
+    setSelectedImageName(null);
 
-    processCustomerMessageWithAI(userText);
+    processCustomerMessageWithAI(userText, imageToSend || undefined);
   };
 
   // Quick preset trigger for rapid testing
@@ -524,6 +579,32 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
                         <span>{msg.time}</span>
                       </div>
 
+                      {/* Attached Image from Device */}
+                      {msg.imageUrl && (
+                        <div
+                          className={`overflow-hidden rounded-2xl border shadow-2xs max-w-sm ${
+                            isCustomer
+                              ? 'border-blue-400/40 bg-blue-700/10 rounded-tr-xs ml-auto'
+                              : 'border-slate-200 bg-white rounded-tl-xs'
+                          }`}
+                        >
+                          <div
+                            className="relative group cursor-pointer"
+                            onClick={() => setPreviewImageModal(msg.imageUrl || null)}
+                          >
+                            <img
+                              src={msg.imageUrl}
+                              alt="รูปภาพแนบจากอุปกรณ์"
+                              className="w-full max-h-56 object-cover hover:opacity-95 transition-opacity"
+                            />
+                            <div className="absolute bottom-2 left-2 bg-slate-900/80 backdrop-blur-xs text-white text-[10px] font-medium px-2 py-0.5 rounded-md flex items-center gap-1 shadow-xs">
+                              <ImageIcon size={11} />
+                              <span>รูปภาพจากอุปกรณ์ (คลิกดูภาพใหญ่)</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Text Bubble */}
                       {msg.text && (
                         <div
@@ -661,15 +742,75 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
               <div ref={messagesEndRef} />
             </div>
 
+            {/* Attached Image Preview Bar before sending */}
+            {selectedImage && (
+              <div className="px-4 py-2 bg-blue-50/90 border-t border-blue-200 flex items-center justify-between text-xs animate-fade-in shrink-0">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden border border-blue-300 shrink-0 bg-white shadow-2xs">
+                    <img
+                      src={selectedImage}
+                      alt="พรีวิวรูปภาพ"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] font-bold text-blue-900 truncate flex items-center gap-1.5">
+                      <ImageIcon size={13} className="text-blue-600 shrink-0" />
+                      <span className="truncate">{selectedImageName || 'รูปภาพจากอุปกรณ์'}</span>
+                    </div>
+                    <span className="text-[10px] text-blue-600">
+                      พร้อมส่งให้ AI ตรวจสอบ (คลิกปุ่มส่ง หรือพิมพ์ข้อความกำกับ)
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleRemoveSelectedImage}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-white transition-colors cursor-pointer"
+                  title="ยกเลิกการแนบรูปภาพนี้"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            )}
+
             {/* Input Bar */}
             <form
               onSubmit={handleSendMessage}
               className="p-3 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0"
             >
+              {/* Hidden Native File Input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageFileChange}
+                className="hidden"
+              />
+
+              {/* Upload image from device button */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className={`p-2 rounded-xl transition-all shadow-2xs border flex items-center justify-center shrink-0 cursor-pointer ${
+                  selectedImage
+                    ? 'bg-blue-100 text-blue-700 border-blue-300 ring-2 ring-blue-400'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200 hover:text-slate-900'
+                }`}
+                title="แทรกรูปจากอุปกรณ์ที่ใช้อยู่ (เช่น รูปหน้าร้าน, บัตรประชาชน, สินค้าตัวอย่าง)"
+              >
+                <ImageIcon size={17} />
+              </button>
+
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="พิมพ์ข้อความทดสอบคุยกับ AI (เช่น 'สวัสดีครับ อยู่ขอนแก่น ต้องการเศษสามชั้น 500 กิโล')..."
+                placeholder={
+                  selectedImage
+                    ? 'พิมพ์ข้อความกำกับรูปภาพ (หรือกดส่งเพื่อส่งรูปทันที)...'
+                    : "พิมพ์ข้อความทดสอบคุยกับ AI (เช่น 'สวัสดีครับ อยู่ขอนแก่น ต้องการเศษสามชั้น 500 กิโล')..."
+                }
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 className="flex-1 text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 font-medium"
@@ -677,9 +818,9 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
 
               <button
                 type="submit"
-                disabled={!inputText.trim()}
+                disabled={!inputText.trim() && !selectedImage}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-xs ${
-                  inputText.trim()
+                  inputText.trim() || selectedImage
                     ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                     : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }`}
@@ -796,6 +937,37 @@ export const ChatSandboxModal: React.FC<ChatSandboxModalProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Image Preview Modal Zoom */}
+      {previewImageModal && (
+        <div
+          className="fixed inset-0 z-60 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setPreviewImageModal(null)}
+        >
+          <div
+            className="relative max-w-3xl max-h-[90vh] bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 p-3 flex flex-col items-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setPreviewImageModal(null)}
+              className="absolute top-4 right-4 p-2 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full transition-colors z-10 cursor-pointer"
+              title="ปิด"
+            >
+              <X size={18} />
+            </button>
+            <img
+              src={previewImageModal}
+              alt="ดูภาพขนาดใหญ่"
+              className="max-h-[80vh] max-w-full object-contain rounded-xl"
+            />
+            <span className="text-xs text-slate-300 mt-2 font-mono flex items-center gap-1.5">
+              <ImageIcon size={13} className="text-blue-400" />
+              <span>รูปภาพที่แนบจากอุปกรณ์</span>
+            </span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
