@@ -1,137 +1,70 @@
 import React from 'react';
-import { Bot, CheckCircle2, ChevronRight, User } from 'lucide-react';
-import { WORKFLOW_STEPS } from '../mockData';
+import { Bot, User, Menu } from 'lucide-react';
 
 interface HeaderProps {
-  currentStep?: string;
-  onStepClick?: (stepNumber: string) => void;
+  onToggleSidebar?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ currentStep = '01', onStepClick }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
   return (
-    <header className="main-header border-b border-slate-200 bg-white">
-      {/* Top Header Bar */}
-      <div className="header-top-row flex items-center justify-between px-6 py-3.5">
-        {/* Module Title & Subtitle */}
-        <div className="header-title-group flex items-center gap-3">
-          <div className="module-number-badge flex items-center justify-center font-bold text-white bg-blue-600 rounded-lg text-sm shadow-sm w-8 h-8">
+    <header className="h-13 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 z-20">
+      {/* Left: Module Title & Phase Badge */}
+      <div className="flex items-center gap-3 min-w-0">
+        {onToggleSidebar && (
+          <button
+            onClick={onToggleSidebar}
+            className="md:hidden p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+            title="เปิดเมนู"
+          >
+            <Menu size={18} />
+          </button>
+        )}
+
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
             01
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold text-slate-800 leading-tight">
-                01 รับลูกค้าและบันทึกข้อมูล (AI Lead Reception)
-              </h1>
-              <span className="phase-badge text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
-                Phase 1 : AI Autonomous + Human Approval
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              ตอบกลับลูกค้าผ่าน LINE OA ตรวจสอบพื้นที่/เชื่อมต่อข้อมูลเดิม เพื่อส่งต่อและแจ้งเตือนตามเงื่อนไขอัตโนมัติ
-            </p>
-          </div>
-        </div>
-
-        {/* Right Status Badges & Profile */}
-        <div className="header-meta-group flex items-center gap-4">
-          {/* AI Status Badge */}
-          <div className="status-badge-card flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200">
-            <div className="ai-status-icon bg-emerald-500 text-white rounded-full p-1 flex items-center justify-center">
-              <Bot size={13} />
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
-                <span>AI ทำงานอัตโนมัติ 90%</span>
-                <span className="live-pulse-dot" />
-              </div>
-              <div className="text-[10px] text-emerald-600">ช่วยลดเวลาคัดกรอง 90% · ส่งต่อทันที</div>
-            </div>
-          </div>
-
-          {/* LINE OA Status Badge */}
-          <div className="status-badge-card flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200">
-            <div className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </div>
-            <div className="text-left">
-              <div className="text-xs font-bold text-slate-800 flex items-center gap-1">
-                <span>เชื่อมต่อ LINE OA</span>
-                <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-100/80 px-1 rounded">
-                  Demo
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-500">รับ-ส่งข้อความและเอกสารอัตโนมัติ</div>
-            </div>
-          </div>
-
-          {/* User Profile */}
-          <div className="user-profile-widget flex items-center gap-2.5 pl-2 border-l border-slate-200">
-            <div className="avatar-circle w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xs border border-blue-200 shadow-xs">
-              <User size={15} />
-            </div>
-            <div className="text-left">
-              <div className="text-xs font-bold text-slate-800 leading-tight">คุณแอน</div>
-              <div className="text-[11px] text-slate-500">ฝ่ายขาย / ผู้ดูแล</div>
-            </div>
+          <div className="flex items-center gap-2 truncate">
+            <h1 className="text-sm font-bold text-slate-900 tracking-tight truncate">
+              01 รับลูกค้าและบันทึกข้อมูล
+            </h1>
+            <span className="hidden sm:inline-flex items-center text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-full shrink-0">
+              Phase 1 : AI Autonomous
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Workflow Stepper Bar */}
-      <div className="stepper-bar-wrap px-5 py-2 bg-slate-50 border-t border-slate-100 overflow-hidden">
-        <div className="stepper-container flex items-center justify-between gap-1 w-full">
-          {WORKFLOW_STEPS.map((s, index) => {
-            const isStepActive = s.step === currentStep;
-            const isStepCompleted = s.isCompleted;
+      {/* Right: Sleek Compact Status Pills & User Profile */}
+      <div className="flex items-center gap-2.5 shrink-0">
+        {/* Sleek Status Pill 1: 90% AI Automation */}
+        <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/90 text-emerald-800 text-[11px] font-semibold">
+          <Bot size={13} className="text-emerald-600" />
+          <span>90% AI Automation</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        </div>
 
-            return (
-              <React.Fragment key={s.step}>
-                <div
-                  onClick={() => onStepClick && onStepClick(s.step)}
-                  className={`step-item flex-1 min-w-0 flex items-center gap-1.5 px-2 py-1.5 rounded-lg cursor-pointer transition-all ${
-                    isStepActive
-                      ? 'bg-blue-600 text-white shadow-sm ring-1 ring-blue-700'
-                      : isStepCompleted
-                      ? 'bg-emerald-50 border border-emerald-200 text-slate-700'
-                      : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  <div
-                    className={`step-badge text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 flex items-center justify-center ${
-                      isStepActive
-                        ? 'bg-blue-800 text-white'
-                        : isStepCompleted
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-slate-200 text-slate-700'
-                    }`}
-                  >
-                    {isStepCompleted ? <CheckCircle2 size={10} /> : s.step}
-                  </div>
-                  <div className="step-text leading-tight text-left min-w-0 truncate">
-                    <div
-                      className={`text-[11px] font-semibold truncate ${
-                        isStepActive ? 'text-white' : 'text-slate-800'
-                      }`}
-                    >
-                      {s.title}
-                    </div>
-                    <div
-                      className={`text-[9px] truncate ${
-                        isStepActive ? 'text-blue-100' : 'text-slate-500'
-                      }`}
-                    >
-                      {s.subtitle}
-                    </div>
-                  </div>
-                </div>
+        {/* Sleek Status Pill 2: LINE OA Connected */}
+        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-medium">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span className="font-semibold text-slate-800 hidden sm:inline">LINE OA</span>
+          <span className="text-[10px] text-emerald-600 font-semibold bg-emerald-100 px-1 rounded">
+            Demo
+          </span>
+        </div>
 
-                {index < WORKFLOW_STEPS.length - 1 && (
-                  <ChevronRight size={12} className="text-slate-300 shrink-0" />
-                )}
-              </React.Fragment>
-            );
-          })}
+        {/* User Profile */}
+        <div className="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <div className="w-7 h-7 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center font-bold text-xs shrink-0 shadow-2xs">
+            <User size={14} />
+          </div>
+          <div className="hidden sm:block text-left leading-tight">
+            <div className="text-xs font-bold text-slate-800">คุณแอน</div>
+            <div className="text-[10px] text-slate-400 font-medium">ฝ่ายขาย / ผู้ดูแล</div>
+          </div>
         </div>
       </div>
     </header>

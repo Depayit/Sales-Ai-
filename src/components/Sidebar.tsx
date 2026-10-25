@@ -13,18 +13,29 @@ import {
   BarChart3,
   Settings,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface SidebarProps {
   activeModule: string;
   onSelectModule: (moduleId: string) => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeModule,
+  onSelectModule,
+  isCollapsed,
+  onToggleCollapse,
+}) => {
   const coreModules = [
     {
       id: '01',
       title: '01 รับลูกค้าและบันทึกข้อมูล',
+      shortTitle: '01 รับลูกค้า',
       sub: 'AI Lead Reception',
       icon: Inbox,
       badge: 'Active',
@@ -32,6 +43,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
     {
       id: '02',
       title: '02 วิเคราะห์ความต้องการและคัดกรองลูกค้า',
+      shortTitle: '02 คัดกรอง',
       sub: 'AI Lead Qualification',
       icon: UserCheck,
       badge: 'ถัดไป',
@@ -39,6 +51,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
     {
       id: '03',
       title: '03 นำเสนอสินค้าและสื่อการขาย',
+      shortTitle: '03 สินค้า/สื่อ',
       sub: 'AI Product Presentation',
       icon: ShoppingBag,
       badge: '',
@@ -46,6 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
     {
       id: '04',
       title: '04 แจ้งเงื่อนไขการค้าและเปิด CV',
+      shortTitle: '04 เงื่อนไข/CV',
       sub: 'Trading Terms & CV',
       icon: FileText,
       badge: '',
@@ -53,6 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
     {
       id: '05',
       title: '05 ยืนยันคำสั่งซื้อ + PO ภายใน',
+      shortTitle: '05 ยืนยัน/PO',
       sub: 'Order Confirmation & PO',
       icon: FileCheck2,
       badge: '',
@@ -60,6 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
     {
       id: '06',
       title: '06 สรุปออเดอร์ + แผนจัดรถให้คลัง',
+      shortTitle: '06 สรุป/จัดรถ',
       sub: 'Manager & Truck Plan',
       icon: Truck,
       badge: '',
@@ -76,100 +92,145 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeModule, onSelectModule }
   ];
 
   return (
-    <aside className="main-sidebar flex flex-col justify-between select-none">
-      {/* Top Logo Header */}
+    <aside
+      className={`sidebar transition-all duration-300 ease-in-out select-none flex flex-col justify-between h-screen bg-slate-900 border-r border-slate-800 text-slate-300 shrink-0 z-30 ${
+        isCollapsed ? 'w-16' : 'w-64'
+      }`}
+    >
+      {/* Top Header & Logo */}
       <div>
-        <div className="sidebar-brand flex items-center gap-3">
-          <div className="logo-box flex items-center justify-center">
-            <span className="logo-a text-white font-bold text-xl tracking-tight">A</span>
-            <div className="sparkle-dot" />
-          </div>
-          <div className="brand-text">
-            <div className="brand-name flex items-center gap-1.5 font-bold text-white text-base leading-tight">
-              <span>Sales AI</span>
-              <Sparkles size={13} className="text-sky-400" />
+        <div className="flex items-center justify-between p-3.5 border-b border-slate-800/80">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white font-bold text-base shadow-md shrink-0">
+              A
             </div>
-            <div className="brand-sub text-xs text-slate-400 font-medium">Automation OS</div>
+            {!isCollapsed && (
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 font-bold text-white text-sm tracking-tight leading-none">
+                  <span>Sales AI</span>
+                  <Sparkles size={12} className="text-sky-400" />
+                </div>
+                <div className="text-[11px] text-slate-400 font-medium tracking-normal mt-0.5">
+                  Automation OS
+                </div>
+              </div>
+            )}
           </div>
+
+          <button
+            onClick={onToggleCollapse}
+            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-auto"
+            title={isCollapsed ? 'ขยายแถบเมนู' : 'ย่อแถบเมนู'}
+          >
+            {isCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+          </button>
         </div>
 
-        {/* Core Modules 01-06 */}
-        <div className="menu-group-label">6 โมดูลหลัก (Core JDs)</div>
-        <nav className="sidebar-nav space-y-0.5">
-          {coreModules.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeModule === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectModule(item.id)}
-                className={`sidebar-nav-item flex items-center justify-between w-full text-left transition-all ${
-                  isActive ? 'active' : ''
-                }`}
-                title={item.title}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className={`nav-icon-wrap shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`}>
-                    <Icon size={16} />
-                  </div>
-                  <span className="nav-title truncate block font-medium text-[12px] leading-tight">
-                    {item.title}
-                  </span>
-                </div>
-                {item.badge && (
-                  <span
-                    className={`module-pill text-[9px] px-1.5 py-0.2 rounded font-semibold shrink-0 ml-1 ${
-                      isActive ? 'bg-blue-500 text-white' : 'bg-slate-700/80 text-slate-300'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        {/* 6 Core Modules */}
+        <div className="px-2 pt-3 pb-1">
+          {!isCollapsed && (
+            <div className="px-2 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              6 โมดูลหลัก (Core JDs)
+            </div>
+          )}
 
-        <div className="sidebar-divider" />
+          <nav className="space-y-1">
+            {coreModules.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeModule === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onSelectModule(item.id)}
+                  title={item.title}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                      : 'text-slate-300 hover:bg-slate-800/70 hover:text-white'
+                  } ${isCollapsed ? 'justify-center px-0' : ''}`}
+                >
+                  <Icon
+                    size={17}
+                    className={`shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`}
+                  />
+                  {!isCollapsed && (
+                    <div className="flex-1 flex items-center justify-between min-w-0">
+                      <span className="truncate text-left text-[12px]">{item.title}</span>
+                      {item.badge && (
+                        <span
+                          className={`text-[9px] px-1.5 py-0.2 rounded font-semibold ml-1 shrink-0 ${
+                            isActive
+                              ? 'bg-blue-700/80 text-white'
+                              : 'bg-slate-800 text-slate-300'
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        <div className="my-2 mx-3 border-t border-slate-800/80" />
 
         {/* General Management Menus */}
-        <div className="menu-group-label">ระบบจัดการทั่วไป</div>
-        <nav className="sidebar-nav space-y-0.5">
-          {generalMenus.map((item) => {
-            const Icon = item.icon;
-            const isActive = activeModule === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectModule(item.id)}
-                className={`sidebar-nav-item flex items-center gap-2 w-full text-left transition-all ${
-                  isActive ? 'active' : ''
-                }`}
-                title={item.title}
-              >
-                <div className="nav-icon-wrap text-slate-400 shrink-0">
-                  <Icon size={16} />
-                </div>
-                <span className="nav-title truncate text-[12px] font-medium text-slate-300">{item.title}</span>
-              </button>
-            );
-          })}
-        </nav>
+        <div className="px-2">
+          {!isCollapsed && (
+            <div className="px-2 pb-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+              ระบบจัดการทั่วไป
+            </div>
+          )}
+
+          <nav className="space-y-1">
+            {generalMenus.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeModule === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => onSelectModule(item.id)}
+                  title={item.title}
+                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-all ${
+                    isActive
+                      ? 'bg-slate-800 text-white font-semibold'
+                      : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                  } ${isCollapsed ? 'justify-center px-0' : ''}`}
+                >
+                  <Icon size={17} className="shrink-0 text-slate-400" />
+                  {!isCollapsed && (
+                    <span className="truncate text-left text-[12px]">{item.title}</span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
       </div>
 
-      {/* Sidebar Footer info */}
-      <div className="sidebar-footer">
-        <div className="company-badge-box">
-          <div className="company-badge text-xs font-semibold text-slate-200">
-            A&C Foods | ไทยแบล็ค | KC Express
+      {/* Footer Info */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-950/40">
+        {!isCollapsed ? (
+          <div>
+            <div className="text-[11px] font-semibold text-slate-200 truncate">
+              A&C Foods | ไทยแบล็ค | KC Express
+            </div>
+            <div className="flex items-center justify-between text-[10px] text-slate-400 mt-1">
+              <span>Sales AI v1.0.0</span>
+              <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Demo Mode
+              </span>
+            </div>
           </div>
-          <div className="version-info flex items-center justify-between text-[11px] text-slate-400 mt-1">
-            <span>Sales AI v1.0.0</span>
-            <span className="demo-tag text-emerald-400 font-mono text-[10px] bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-700/40">
-              Demo Active
-            </span>
+        ) : (
+          <div className="flex justify-center" title="A&C Foods • Sales AI v1.0.0">
+            <ShieldCheck size={16} className="text-emerald-500" />
           </div>
-        </div>
+        )}
       </div>
     </aside>
   );

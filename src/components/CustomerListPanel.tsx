@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, RefreshCw, Bot, AlertTriangle, User, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, Filter, RefreshCw, Bot, AlertTriangle, User, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { Customer, FilterTab } from '../types';
 
 interface CustomerListPanelProps {
@@ -23,13 +23,11 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Filter based on active tab and search query
+  // Filter customers by tab & search query
   const filteredCustomers = customers.filter((c) => {
-    // Tab filter
     if (activeTab === 'ai' && c.status !== 'ai') return false;
     if (activeTab === 'pending' && c.status !== 'sales' && c.status !== 'out_of_route') return false;
 
-    // Search filter
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase().trim();
     return (
@@ -42,67 +40,68 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
   });
 
   return (
-    <div className="customer-list-panel flex flex-col h-full bg-white border-r border-slate-200 select-none">
-      {/* Panel Header */}
-      <div className="p-3 border-b border-slate-200">
-        <div className="flex items-center justify-between mb-2.5">
+    <div className="w-full md:w-80 h-full bg-white border-r border-slate-200 flex flex-col shrink-0 select-none overflow-hidden">
+      {/* Top Fixed Header: Title, Controls, Tabs, Search */}
+      <div className="p-3 border-b border-slate-200 bg-white space-y-2.5 shrink-0">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h2 className="text-sm font-bold text-slate-800">แชท LINE OA</h2>
-            <span className="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-              {customers.length} รายการ
+            <h2 className="text-sm font-bold text-slate-900 tracking-tight">แชท LINE OA</h2>
+            <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/70">
+              {customers.length}
             </span>
           </div>
-          <div className="flex items-center gap-1 text-slate-400">
+
+          <div className="flex items-center gap-0.5 text-slate-400">
             <button
-              className="p-1 rounded hover:bg-slate-100 hover:text-slate-600 transition-colors"
+              className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-700 transition-colors"
               title="รีเฟรชข้อมูล"
             >
-              <RefreshCw size={14} />
+              <RefreshCw size={13} />
             </button>
             <button
-              className="p-1 rounded hover:bg-slate-100 hover:text-slate-600 transition-colors"
-              title="ตัวกรองขั้นสูง"
+              className="p-1.5 rounded-md hover:bg-slate-100 hover:text-slate-700 transition-colors"
+              title="ตัวกรอง"
             >
-              <Filter size={14} />
+              <Filter size={13} />
             </button>
           </div>
         </div>
 
-        {/* Tab Filters */}
-        <div className="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-lg mb-2.5 text-center text-xs font-medium">
+        {/* Filter Tabs */}
+        <div className="grid grid-cols-3 gap-1 bg-slate-100 p-0.5 rounded-lg text-center text-xs font-medium">
           <button
             onClick={() => onTabChange('all')}
             className={`py-1 rounded-md transition-all ${
               activeTab === 'all'
-                ? 'bg-white text-slate-900 font-bold shadow-xs'
+                ? 'bg-white text-slate-900 font-bold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            ทั้งหมด (128)
+            ทั้งหมด 128
           </button>
           <button
             onClick={() => onTabChange('ai')}
             className={`py-1 rounded-md transition-all ${
               activeTab === 'ai'
-                ? 'bg-white text-blue-700 font-bold shadow-xs'
+                ? 'bg-white text-blue-700 font-bold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            AI ดูแล (112)
+            AI ดูแล 112
           </button>
           <button
             onClick={() => onTabChange('pending')}
             className={`py-1 rounded-md transition-all ${
               activeTab === 'pending'
-                ? 'bg-white text-amber-700 font-bold shadow-xs'
+                ? 'bg-white text-amber-700 font-bold shadow-2xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            รอคนตอบ (16)
+            รอคนตอบ 16
           </button>
         </div>
 
-        {/* Search Bar */}
+        {/* Fixed Search Bar */}
         <div className="relative">
           <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -110,16 +109,24 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
             placeholder="ค้นหาชื่อลูกค้า, เบอร์โทร, จังหวัด..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-all"
+            className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-all"
           />
+          {searchQuery && (
+            <button
+              onClick={() => onSearchChange('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={12} />
+            </button>
+          )}
         </div>
       </div>
 
-      {/* Customer List Stream */}
-      <div className="customer-items-stream flex-1 overflow-y-auto divide-y divide-slate-100">
+      {/* Scrollable Customer List */}
+      <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
         {filteredCustomers.length === 0 ? (
           <div className="p-8 text-center text-slate-400 text-xs">
-            ไม่พบรายชื่อลูกค้าที่ค้นหา
+            ไม่พบรายชื่อลูกค้าที่ตรงกับคำค้นหา
           </div>
         ) : (
           filteredCustomers.map((cust) => {
@@ -129,36 +136,36 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
               <div
                 key={cust.id}
                 onClick={() => onSelectCustomer(cust)}
-                className={`customer-list-item flex items-start gap-3 p-3 cursor-pointer transition-all ${
+                className={`flex items-start gap-3 p-3 cursor-pointer transition-all ${
                   isSelected
-                    ? 'bg-blue-50/70 border-l-4 border-l-blue-600 shadow-xs'
-                    : 'hover:bg-slate-50 border-l-4 border-l-transparent'
+                    ? 'bg-blue-50/70 border-l-4 border-l-blue-600'
+                    : 'hover:bg-slate-50/80 border-l-4 border-l-transparent'
                 }`}
               >
-                {/* Avatar with indicator */}
+                {/* Avatar with Status Pin */}
                 <div className="relative shrink-0 mt-0.5">
                   <div
-                    className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-xs"
+                    className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-2xs"
                     style={{ backgroundColor: cust.avatarColor }}
                   >
                     {cust.name.substring(0, 2)}
                   </div>
                   {cust.status === 'ai' ? (
                     <div className="absolute -bottom-0.5 -right-0.5 bg-blue-600 text-white p-0.5 rounded-full border border-white">
-                      <Bot size={10} />
+                      <Bot size={9} />
                     </div>
                   ) : cust.status === 'out_of_route' ? (
                     <div className="absolute -bottom-0.5 -right-0.5 bg-rose-500 text-white p-0.5 rounded-full border border-white">
-                      <AlertTriangle size={10} />
+                      <AlertTriangle size={9} />
                     </div>
                   ) : (
                     <div className="absolute -bottom-0.5 -right-0.5 bg-amber-500 text-white p-0.5 rounded-full border border-white">
-                      <User size={10} />
+                      <User size={9} />
                     </div>
                   )}
                 </div>
 
-                {/* Details */}
+                {/* Info & Last message */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
                     <span
@@ -194,13 +201,13 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
                           นอก Route
                         </span>
                       )}
-                      <span className="text-[10px] text-slate-400 truncate max-w-[85px]">
+                      <span className="text-[10px] text-slate-400 truncate max-w-[80px]">
                         {cust.province}
                       </span>
                     </div>
 
                     {cust.unreadCount && cust.unreadCount > 0 ? (
-                      <span className="bg-rose-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      <span className="bg-rose-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
                         {cust.unreadCount}
                       </span>
                     ) : null}
@@ -212,8 +219,8 @@ export const CustomerListPanel: React.FC<CustomerListPanelProps> = ({
         )}
       </div>
 
-      {/* Pagination Footer */}
-      <div className="panel-pagination border-t border-slate-200 p-2 flex items-center justify-between bg-slate-50 text-[11px] text-slate-600">
+      {/* Compact Pagination */}
+      <div className="border-t border-slate-200 px-3 py-2 flex items-center justify-between bg-slate-50 text-[11px] text-slate-600 shrink-0">
         <button
           onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
           className="p-1 rounded hover:bg-slate-200 disabled:opacity-30"

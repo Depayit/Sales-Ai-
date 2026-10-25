@@ -12,26 +12,37 @@ import {
   FileCheck,
   Sparkles,
   Truck,
+  ArrowLeft,
+  ZoomIn,
 } from 'lucide-react';
 import type { Customer, ChatMessage } from '../types';
 
 interface ChatPanelProps {
   customer: Customer;
   onSendMessage?: (text: string) => void;
+  onToggleProfileDrawer?: () => void;
+  onBackToInbox?: () => void;
+  showBackToInbox?: boolean;
 }
 
-export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage }) => {
+export const ChatPanel: React.FC<ChatPanelProps> = ({
+  customer,
+  onSendMessage,
+  onToggleProfileDrawer,
+  onBackToInbox,
+  showBackToInbox,
+}) => {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(customer.chatMessages);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const prevCustomerRef = useRef<string>(customer.id);
+  const prevCustomerId = useRef<string>(customer.id);
 
-  // Update messages when customer switches and reset scroll to top
+  // When customer switches, update messages and reset scroll to top
   useEffect(() => {
     setMessages(customer.chatMessages);
-    if (prevCustomerRef.current !== customer.id) {
-      prevCustomerRef.current = customer.id;
+    if (prevCustomerId.current !== customer.id) {
+      prevCustomerId.current = customer.id;
       if (messagesContainerRef.current) {
         messagesContainerRef.current.scrollTop = 0;
       }
@@ -56,18 +67,17 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
       onSendMessage(newMsg.text || '');
     }
 
-    // Scroll to bottom on user send
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
 
-    // Simulate AI response after short delay if appropriate
+    // AI automated simulation reply
     setTimeout(() => {
       const aiReply: ChatMessage = {
         id: `ai-${Date.now()}`,
         sender: 'ai',
         time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }),
-        text: 'AI ระบบอัตโนมัติ: บันทึกข้อความและอัปเดตสถานะให้เรียบร้อยแล้วค่ะ',
+        text: 'AI ระบบอัตโนมัติ: บันทึกข้อมูลและแจ้งเตือนเข้าสู่ระบบเรียบร้อยค่ะ',
       };
       setMessages((prev) => [...prev, aiReply]);
       setTimeout(() => {
@@ -77,66 +87,96 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
   };
 
   return (
-    <div className="chat-panel flex flex-col h-full bg-[#f4f6f9] border-r border-slate-200">
-      {/* Chat Header */}
-      <div className="chat-header flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200">
-        <div className="flex items-center gap-3">
+    <div className="flex-1 flex flex-col h-full bg-slate-50/60 overflow-hidden min-w-0">
+      {/* Sticky Chat Header */}
+      <div className="sticky top-0 z-10 px-4 py-2.5 bg-white border-b border-slate-200 flex items-center justify-between shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0">
+          {showBackToInbox && onBackToInbox && (
+            <button
+              onClick={onBackToInbox}
+              className="md:hidden p-1 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 mr-1"
+              title="กลับไปหน้ารายชื่อ"
+            >
+              <ArrowLeft size={18} />
+            </button>
+          )}
+
           <div
-            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shadow-xs"
+            className="w-9 h-9 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-2xs shrink-0"
             style={{ backgroundColor: customer.avatarColor }}
           >
             {customer.name.substring(0, 2)}
           </div>
-          <div>
+
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-slate-900 leading-tight">
+              <h2 className="text-sm font-bold text-slate-900 tracking-tight truncate">
                 {customer.name}
-              </h3>
-              <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              </h2>
+              <span
+                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full inline-flex items-center gap-1 shrink-0 ${
+                  customer.isRegularRoute
+                    ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
+                    : 'text-rose-700 bg-rose-50 border border-rose-200'
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    customer.isRegularRoute ? 'bg-emerald-500' : 'bg-rose-500'
+                  }`}
+                />
                 {customer.isRegularRoute ? `ในพื้นที่ (${customer.routeCode})` : 'นอก Route ปกติ'}
               </span>
             </div>
-            <div className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-              <span>{customer.category}</span>
+
+            <div className="text-[11px] text-slate-500 flex items-center gap-2 mt-0.5 truncate">
+              <span className="truncate">{customer.category}</span>
               <span>•</span>
               <span className="font-mono text-slate-600">{customer.phone}</span>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-1 text-slate-500">
+        {/* Action icons */}
+        <div className="flex items-center gap-1 text-slate-500 shrink-0">
           <button
             className="p-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-colors"
-            title="ค้นหาในบทสนทนา"
+            title="ค้นหาข้อความ"
           >
             <Search size={16} />
           </button>
           <button
             className="p-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-colors"
-            title="โทรติดต่อลูกค้า"
+            title="โทรติดต่อ"
           >
             <Phone size={16} />
           </button>
+
+          {/* Info button (opens slide-over drawer on tablet / mobile) */}
           <button
-            className="p-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-colors"
-            title="ดูข้อมูลเพิ่มเติม"
+            onClick={onToggleProfileDrawer}
+            className="p-1.5 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            title="ดูข้อมูลลูกค้า (CRM)"
           >
             <Info size={16} />
           </button>
+
           <button
             className="p-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-colors"
-            title="เมนูอื่นๆ"
+            title="เพิ่มเติม"
           >
             <MoreVertical size={16} />
           </button>
         </div>
       </div>
 
-      {/* Chat Messages Stream */}
-      <div ref={messagesContainerRef} className="chat-stream flex-1 overflow-y-auto p-4 space-y-3.5">
-        <div className="chat-date-divider flex items-center justify-center my-2">
-          <span className="text-[11px] font-medium text-slate-400 bg-slate-200/80 px-2.5 py-0.5 rounded-full">
+      {/* Scrollable Message Area */}
+      <div
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-3.5 scroll-smooth"
+      >
+        <div className="flex items-center justify-center my-2">
+          <span className="text-[10px] font-medium text-slate-400 bg-slate-200/70 px-2.5 py-0.5 rounded-full">
             วันนี้ (บันทึกอัตโนมัติผ่าน LINE OA)
           </span>
         </div>
@@ -149,34 +189,26 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
           return (
             <div
               key={msg.id}
-              className={`message-row flex gap-2.5 ${
-                isCustomer ? 'justify-end' : 'justify-start'
-              }`}
+              className={`flex gap-2.5 ${isCustomer ? 'justify-end' : 'justify-start'}`}
             >
-              {/* Left Avatar for AI or Sales */}
+              {/* Avatar on Left (for AI or Sales) */}
               {!isCustomer && (
                 <div className="shrink-0 mt-0.5">
                   {isAi ? (
-                    <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                    <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xs">
                       <Bot size={14} />
                     </div>
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+                    <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">
                       ส
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Message Content Bubble */}
-              <div
-                className={`max-w-[85%] ${
-                  isCustomer
-                    ? 'items-end'
-                    : 'items-start'
-                }`}
-              >
-                {/* Sender Tag */}
+              {/* Message Bubble Column */}
+              <div className={`max-w-[85%] md:max-w-[78%] ${isCustomer ? 'items-end' : 'items-start'}`}>
+                {/* Sender tag & time */}
                 <div className="text-[10px] text-slate-400 mb-1 flex items-center gap-1 font-medium">
                   {isAi ? (
                     <span className="text-blue-700 font-semibold flex items-center gap-1">
@@ -190,35 +222,38 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                   <span>• {msg.time}</span>
                 </div>
 
-                {/* Main Bubble Card */}
+                {/* Message Bubble Box */}
                 <div
-                  className={`message-bubble p-3 rounded-2xl text-xs leading-relaxed shadow-xs ${
+                  className={`p-3.5 rounded-2xl text-xs leading-relaxed shadow-xs ${
                     isCustomer
                       ? 'bg-emerald-600 text-white rounded-tr-none'
                       : isSales
                       ? 'bg-blue-600 text-white rounded-tl-none'
-                      : 'bg-white text-slate-800 border border-slate-200/80 rounded-tl-none'
+                      : 'bg-white text-slate-800 border border-slate-200/90 rounded-tl-none'
                   }`}
                 >
-                  {/* Delivery Map Card */}
+                  {/* Delivery Route Map Card with Clean Padding & Subtle Shadow */}
                   {msg.cardType === 'map' && msg.cardData && (
-                    <div className="mb-2.5 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden text-slate-800">
-                      <div className="relative h-28 w-full bg-slate-200 overflow-hidden">
+                    <div className="mb-3 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs text-slate-800">
+                      <div className="relative h-36 w-full bg-slate-100 overflow-hidden group">
                         <img
                           src="/assets/route_map.jpg"
-                          alt="Route Map"
-                          className="w-full h-full object-cover"
+                          alt="Delivery Route Map"
+                          className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                         />
                         <div className="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                           <Truck size={10} />
                           {msg.cardData.mapZone}
                         </div>
+                        <div className="absolute top-2 right-2 bg-slate-900/60 backdrop-blur-xs text-white text-[10px] p-1 rounded-md">
+                          <ZoomIn size={12} />
+                        </div>
                       </div>
-                      <div className="p-2.5">
-                        <div className="font-bold text-xs text-slate-900 mb-0.5">
+                      <div className="p-3 bg-white">
+                        <div className="font-bold text-xs text-slate-900">
                           {msg.cardData.mapTitle}
                         </div>
-                        <div className="text-[11px] text-slate-500">
+                        <div className="text-[11px] text-slate-500 mt-0.5">
                           {msg.cardData.mapDesc}
                         </div>
                       </div>
@@ -227,35 +262,34 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
 
                   {/* Product Pricing Table Card */}
                   {msg.cardType === 'product_pricing' && msg.cardData && (
-                    <div className="mb-2.5 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden text-slate-800">
-                      {/* Product Header with Image */}
-                      <div className="flex items-center gap-3 p-2.5 bg-white border-b border-slate-200">
+                    <div className="mb-3 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-xs text-slate-800">
+                      <div className="flex items-center gap-3 p-3 bg-slate-50 border-b border-slate-200">
                         <img
                           src={msg.cardData.productImage || '/assets/pork_belly.jpg'}
                           alt="Product"
-                          className="w-14 h-14 rounded-lg object-cover border border-slate-200"
+                          className="w-13 h-13 rounded-lg object-cover border border-slate-200 shrink-0"
                         />
                         <div>
                           <div className="font-bold text-xs text-slate-900">
                             {msg.cardData.productTitle}
                           </div>
                           <div className="text-[11px] text-emerald-600 font-semibold mt-0.5">
-                            คัดเกรดสด มาตรฐานฟาร์ม A&C
+                            เกรดสด มาตรฐานฟาร์มและโรงเชือด A&C
                           </div>
                         </div>
                       </div>
 
-                      {/* Tiered Price Table */}
-                      <div className="p-2.5">
-                        <div className="text-[11px] font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                          <span>ตารางราคาขายส่ง (อ้างอิง Quotation Program)</span>
-                          <span className="text-[10px] text-blue-600 font-medium">บาท / กก.</span>
+                      <div className="p-3">
+                        <div className="text-[11px] font-bold text-slate-700 mb-2 flex items-center justify-between">
+                          <span>ตารางราคาขายส่งตามปริมาณ</span>
+                          <span className="text-[10px] text-blue-600 font-semibold">บาท / กก.</span>
                         </div>
-                        <table className="w-full text-[11px] border border-slate-200 rounded overflow-hidden">
+
+                        <table className="w-full text-[11px] border border-slate-200 rounded-lg overflow-hidden">
                           <thead>
                             <tr className="bg-slate-100 text-slate-600 border-b border-slate-200">
-                              <th className="py-1 px-2 text-left font-semibold">จำนวนสั่งซื้อ</th>
-                              <th className="py-1 px-2 text-right font-semibold">ราคา (บาท/กก.)</th>
+                              <th className="py-1 px-2.5 text-left font-semibold">จำนวนสั่งซื้อ</th>
+                              <th className="py-1 px-2.5 text-right font-semibold">ราคา (บาท/กก.)</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-200">
@@ -264,10 +298,10 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                               return (
                                 <tr
                                   key={idx}
-                                  className={isTarget ? 'bg-blue-50/90 font-bold text-blue-900' : ''}
+                                  className={isTarget ? 'bg-blue-50 font-bold text-blue-900' : ''}
                                 >
-                                  <td className="py-1 px-2">{t.range}</td>
-                                  <td className="py-1 px-2 text-right">
+                                  <td className="py-1 px-2.5">{t.range}</td>
+                                  <td className="py-1 px-2.5 text-right font-semibold">
                                     {t.pricePerKg.toFixed(0)} บาท
                                   </td>
                                 </tr>
@@ -276,8 +310,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                           </tbody>
                         </table>
 
-                        {/* Calculation summary */}
-                        <div className="mt-2 p-2 bg-blue-50 rounded-lg border border-blue-200 text-blue-900 text-center">
+                        <div className="mt-2.5 p-2 bg-blue-50/80 rounded-lg border border-blue-200 text-blue-900 text-center">
                           <div className="font-bold text-xs">{msg.cardData.recommendedTier}</div>
                           <div className="text-[11px] font-semibold text-emerald-700 mt-0.5">
                             {msg.cardData.totalAmount}
@@ -287,10 +320,10 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                     </div>
                   )}
 
-                  {/* Document Upload Card */}
+                  {/* Document Upload Preview */}
                   {msg.cardType === 'doc_upload' && msg.cardData && (
-                    <div className="mb-2 p-2 bg-emerald-500/20 border border-white/40 rounded-xl flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-lg bg-white text-emerald-700 flex items-center justify-center shrink-0">
+                    <div className="mb-2 p-2.5 bg-emerald-500/20 border border-white/40 rounded-xl flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-lg bg-white text-emerald-700 flex items-center justify-center shrink-0 shadow-2xs">
                         <FileCheck size={18} />
                       </div>
                       <div className="truncate">
@@ -302,11 +335,11 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                     </div>
                   )}
 
-                  {/* Message Text with newlines */}
-                  <div className="whitespace-pre-line">{msg.text}</div>
+                  {/* Plain Text Message */}
+                  <div className="whitespace-pre-line leading-relaxed">{msg.text}</div>
                 </div>
 
-                {/* Read status check */}
+                {/* Read checkmark */}
                 <div
                   className={`flex items-center gap-1 text-[10px] text-slate-400 mt-0.5 px-1 ${
                     isCustomer ? 'justify-end' : 'justify-start'
@@ -317,11 +350,11 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
                 </div>
               </div>
 
-              {/* Right Avatar for Customer */}
+              {/* Avatar on Right (for Customer) */}
               {isCustomer && (
                 <div className="shrink-0 mt-0.5">
                   <div
-                    className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-xs"
+                    className="w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs text-white shadow-2xs"
                     style={{ backgroundColor: customer.avatarColor }}
                   >
                     {customer.name.substring(0, 2)}
@@ -334,22 +367,22 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chat Input Bar */}
+      {/* Sticky Bottom Chat Input Bar */}
       <form
         onSubmit={handleSend}
-        className="chat-input-bar p-3 bg-white border-t border-slate-200 flex items-center gap-2"
+        className="sticky bottom-0 z-10 p-3 bg-white border-t border-slate-200 flex items-center gap-2 shadow-sm shrink-0"
       >
         <div className="flex items-center gap-1 text-slate-400">
           <button
             type="button"
-            className="p-1.5 rounded-full hover:bg-slate-100 hover:text-slate-600 transition-colors"
-            title="แนบรูปภาพสินค้า"
+            className="p-1.5 rounded-full hover:bg-slate-100 hover:text-slate-700 transition-colors"
+            title="แนบรูปภาพ"
           >
             <ImageIcon size={18} />
           </button>
           <button
             type="button"
-            className="p-1.5 rounded-full hover:bg-slate-100 hover:text-slate-600 transition-colors"
+            className="p-1.5 rounded-full hover:bg-slate-100 hover:text-slate-700 transition-colors"
             title="แนบเอกสาร"
           >
             <Paperclip size={18} />
@@ -367,7 +400,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({ customer, onSendMessage })
         <button
           type="submit"
           disabled={!inputText.trim()}
-          className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:hover:bg-blue-600 transition-all shadow-sm"
+          className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 disabled:hover:bg-blue-600 transition-all shadow-xs shrink-0"
           title="ส่งข้อความ"
         >
           <Send size={15} />

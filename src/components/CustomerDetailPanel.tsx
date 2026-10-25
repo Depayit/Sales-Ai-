@@ -22,21 +22,22 @@ import type { Customer, CustomerTag } from '../types';
 interface CustomerDetailPanelProps {
   customer: Customer;
   onActionClick: (actionName: string, customer: Customer) => void;
+  onClose?: () => void;
+  isDrawer?: boolean;
 }
 
 export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
   customer,
   onActionClick,
+  onClose,
+  isDrawer = false,
 }) => {
-  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'history' | 'docs' | 'alerts'>(
-    'profile'
-  );
+  const [activeTab, setActiveTab] = useState<'profile' | 'orders' | 'history'>('profile');
   const [tags, setTags] = useState<CustomerTag[]>(customer.tags);
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [newTagText, setNewTagText] = useState('');
   const [copiedPhone, setCopiedPhone] = useState(false);
 
-  // Sync tags if customer changes
   React.useEffect(() => {
     setTags(customer.tags);
     setIsAddingTag(false);
@@ -69,13 +70,17 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
   };
 
   return (
-    <div className="customer-detail-panel flex flex-col h-full bg-white overflow-hidden select-none">
-      {/* Top Header Tabs */}
-      <div className="border-b border-slate-200 px-4 pt-2.5 bg-slate-50">
+    <div
+      className={`h-full bg-white border-l border-slate-200 flex flex-col shrink-0 select-none overflow-hidden ${
+        isDrawer ? 'w-full' : 'w-88 xl:w-96'
+      }`}
+    >
+      {/* Top Tab Navigation & Drawer Close */}
+      <div className="border-b border-slate-200 px-3 pt-2 bg-slate-50 flex items-center justify-between shrink-0">
         <div className="flex items-center gap-1 overflow-x-auto text-xs font-semibold">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`pb-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-2 px-3 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'profile'
                 ? 'border-b-blue-600 text-blue-600 font-bold'
                 : 'border-b-transparent text-slate-500 hover:text-slate-800'
@@ -85,7 +90,7 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`pb-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-2 px-3 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'orders'
                 ? 'border-b-blue-600 text-blue-600 font-bold'
                 : 'border-b-transparent text-slate-500 hover:text-slate-800'
@@ -95,7 +100,7 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('history')}
-            className={`pb-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
+            className={`pb-2 px-3 border-b-2 transition-all whitespace-nowrap ${
               activeTab === 'history'
                 ? 'border-b-blue-600 text-blue-600 font-bold'
                 : 'border-b-transparent text-slate-500 hover:text-slate-800'
@@ -103,205 +108,200 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
           >
             ประวัติการสนทนา
           </button>
-          <button
-            onClick={() => setActiveTab('docs')}
-            className={`pb-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
-              activeTab === 'docs'
-                ? 'border-b-blue-600 text-blue-600 font-bold'
-                : 'border-b-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            เอกสาร (CV)
-          </button>
-          <button
-            onClick={() => setActiveTab('alerts')}
-            className={`pb-2.5 px-3 border-b-2 transition-all whitespace-nowrap ${
-              activeTab === 'alerts'
-                ? 'border-b-blue-600 text-blue-600 font-bold'
-                : 'border-b-transparent text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            รายการแจ้งเตือน
-          </button>
         </div>
+
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-colors mb-1.5"
+            title="ปิดหน้าต่าง"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
-      {/* Main Scrollable Content */}
+      {/* Scrollable Body Content */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {/* Customer Header Title & Quick Profile */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900 leading-tight">
+        {/* Customer Header Info */}
+        <div className="flex items-start justify-between pb-3 border-b border-slate-100">
+          <div className="min-w-0 pr-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-base font-bold text-slate-900 tracking-tight truncate">
                 {customer.name}
-              </h2>
-              <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full">
+              </h3>
+              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full shrink-0">
                 Lead ID: {customer.id.toUpperCase()}
               </span>
             </div>
-            <div className="text-xs text-slate-500 mt-1 flex items-center gap-2">
+
+            <div className="text-xs text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
               <span className="flex items-center gap-1 text-slate-600 font-medium">
-                <Building size={12} /> {customer.category}
+                <Building size={12} className="text-slate-400" /> {customer.category}
               </span>
               <span>•</span>
-              <span className="flex items-center gap-1 text-slate-600 font-medium">
-                <User size={12} /> {customer.contactPerson}
+              <span className="flex items-center gap-1 text-slate-600 font-medium truncate">
+                <User size={12} className="text-slate-400" /> {customer.contactPerson}
               </span>
             </div>
           </div>
 
           <button
             onClick={handleCopyPhone}
-            className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors border border-slate-200 shrink-0"
             title="คัดลอกเบอร์โทร"
           >
             {copiedPhone ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
-            <span>{customer.phone}</span>
+            <span className="font-mono">{customer.phone}</span>
           </button>
         </div>
 
-        {/* Section 1: Customer Profile Form Fields */}
-        <div className="info-section bg-slate-50/60 p-3 rounded-xl border border-slate-200/80">
+        {/* Section 1: 2-Column Key-Value Grid (No text overlap) */}
+        <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
           <div className="text-xs font-bold text-slate-800 mb-2.5 flex items-center justify-between">
             <span>ข้อมูลลูกค้า (Lead Profile)</span>
             <span className="text-[10px] text-slate-400 font-normal">
-              บันทึกเมื่อ: {customer.registeredAt}
+              บันทึก: {customer.registeredAt}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs">
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 ประเภทธุรกิจ
               </span>
-              <span className="text-slate-800 font-semibold">{customer.category}</span>
-            </div>
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
-                ผู้ติดต่อ
+              <span className="text-slate-800 font-semibold truncate block mt-0.5">
+                {customer.category}
               </span>
-              <span className="text-slate-800 font-semibold">{customer.contactPerson}</span>
             </div>
 
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
+                ผู้ติดต่อ
+              </span>
+              <span className="text-slate-800 font-semibold truncate block mt-0.5">
+                {customer.contactPerson}
+              </span>
+            </div>
+
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 จังหวัด / อำเภอ
               </span>
-              <span className="text-slate-800 font-semibold">
+              <span className="text-slate-800 font-semibold truncate block mt-0.5">
                 จ.{customer.province} / อ.{customer.district}
               </span>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 ช่องทางที่มา
               </span>
-              <span className="text-slate-800 font-semibold">{customer.sourceChannel}</span>
+              <span className="text-slate-800 font-semibold truncate block mt-0.5">
+                {customer.sourceChannel}
+              </span>
             </div>
 
-            <div className="col-span-2">
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+            <div className="col-span-2 min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 ที่อยู่จัดส่ง / พิกัดหน้าร้าน
               </span>
               <div className="flex items-start gap-1.5 mt-0.5 text-slate-800 font-medium">
                 <MapPin size={13} className="text-rose-500 shrink-0 mt-0.5" />
-                <span>{customer.address}</span>
+                <span className="break-words leading-tight">{customer.address}</span>
               </div>
             </div>
 
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 วันที่ต้องการรับสินค้า
               </span>
-              <div className="flex items-center gap-1.5 mt-0.5 text-slate-800 font-semibold">
-                <Calendar size={12} className="text-blue-600" />
-                <span>{customer.requestedDate}</span>
+              <div className="flex items-center gap-1.5 mt-0.5 text-slate-800 font-semibold truncate">
+                <Calendar size={12} className="text-blue-600 shrink-0" />
+                <span className="truncate">{customer.requestedDate}</span>
               </div>
             </div>
-            <div>
-              <span className="text-slate-400 block text-[10px] uppercase font-medium">
+
+            <div className="min-w-0">
+              <span className="text-slate-400 block text-[10px] uppercase font-semibold">
                 ความถี่ในการสั่งซื้อ
               </span>
-              <div className="flex items-center gap-1.5 mt-0.5 text-slate-800 font-semibold">
-                <Clock size={12} className="text-emerald-600" />
-                <span>{customer.frequency}</span>
+              <div className="flex items-center gap-1.5 mt-0.5 text-slate-800 font-semibold truncate">
+                <Clock size={12} className="text-emerald-600 shrink-0" />
+                <span className="truncate">{customer.frequency}</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Section 2: Delivery Area & Route */}
-        <div className="route-section bg-slate-50/60 p-3 rounded-xl border border-slate-200/80">
+        {/* Section 2: Delivery Area & Route Section */}
+        <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
               <Truck size={14} className="text-blue-600" /> พื้นที่จัดส่งและ Route
             </span>
             <button
               onClick={() => onActionClick('ดูรายละเอียด Route', customer)}
-              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
             >
-              <span>ดูรายละเอียด Route</span>
+              <span>รายละเอียด</span>
               <ExternalLink size={10} />
             </button>
           </div>
 
           <div className="flex items-start gap-3">
-            {/* Map Preview Thumbnail */}
-            <div className="w-24 h-20 rounded-lg overflow-hidden border border-slate-200 shrink-0 bg-slate-200 relative group">
+            <div className="w-22 h-20 rounded-lg overflow-hidden border border-slate-200 shrink-0 bg-slate-100">
               <img
                 src={customer.routeMapUrl || '/assets/route_map.jpg'}
                 alt="Route thumbnail"
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-blue-900/10 group-hover:bg-transparent transition-all" />
             </div>
 
-            {/* Route Details */}
-            <div className="flex-1 text-xs space-y-1">
-              <div className="flex items-center gap-1.5">
+            <div className="flex-1 text-xs space-y-1 min-w-0">
+              <div>
                 {customer.isRegularRoute ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600" />
                     อยู่ในพื้นที่ส่งประจำ ({customer.routeCode})
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-100/90 px-2 py-0.5 rounded-full">
-                    <AlertCircle size={11} />
-                    อยู่นอกสายส่งประจำ (ส่งฝ่ายขายพิจารณา)
+                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-700 bg-rose-100/90 px-2 py-0.5 rounded-full">
+                    <AlertCircle size={10} />
+                    อยู่นอกสายส่งประจำ (ส่งพิจารณา)
                   </span>
                 )}
               </div>
 
-              <div className="text-[11px] text-slate-600">
-                <span className="font-semibold text-slate-700">พื้นที่จัดส่งประจำ:</span>{' '}
+              <div className="text-[11px] text-slate-600 truncate">
+                <span className="font-semibold text-slate-700">พื้นที่ส่ง:</span>{' '}
                 {customer.province} ({customer.district})
               </div>
-              <div className="text-[11px] text-slate-600">
-                <span className="font-semibold text-slate-700">รอบส่งประจำ:</span>{' '}
-                {customer.routeDays}
+              <div className="text-[11px] text-slate-600 truncate">
+                <span className="font-semibold text-slate-700">รอบส่ง:</span> {customer.routeDays}
               </div>
-              <div className="text-[10px] text-slate-400">
-                จัดส่งโดยรถควบคุมอุณหภูมิห้องเย็น A&C Fleet
+              <div className="text-[10px] text-slate-400 truncate">
+                รถควบคุมอุณหภูมิห้องเย็น A&C Fleet
               </div>
             </div>
           </div>
         </div>
 
         {/* Section 3: Customer Tags */}
-        <div className="tag-section">
+        <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800">
               Tag ของลูกค้า ({tags.length})
             </span>
             <button
               onClick={() => setIsAddingTag(true)}
-              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
             >
               <Plus size={12} />
               <span>เพิ่ม Tag</span>
             </button>
           </div>
 
-          {/* Add Tag Form */}
           {isAddingTag && (
             <form onSubmit={handleAddTag} className="flex items-center gap-1.5 mb-2.5">
               <input
@@ -328,12 +328,11 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
             </form>
           )}
 
-          {/* Tag Chips */}
           <div className="flex flex-wrap gap-1.5">
             {tags.map((tag) => (
               <span
                 key={tag.id}
-                className="tag-chip inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300 transition-colors"
+                className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200 hover:border-slate-300 transition-colors"
               >
                 <span>{tag.label}</span>
                 <button
@@ -350,99 +349,98 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
         </div>
 
         {/* Section 4: Interested Products Table */}
-        <div className="products-table-section">
+        <div>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-800">
               รายการสินค้าที่สนใจ ({customer.interestedProducts.length})
             </span>
             <button
               onClick={() => onActionClick('เพิ่มสินค้า', customer)}
-              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1"
+              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
             >
               <Plus size={12} />
               <span>เพิ่มสินค้า</span>
             </button>
           </div>
 
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
+          <div className="border border-slate-200 rounded-lg overflow-hidden shadow-2xs">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                   <th className="py-2 px-2.5">สินค้า</th>
-                  <th className="py-2 px-2 text-center">รูป</th>
-                  <th className="py-2 px-2 text-right">จำนวน</th>
-                  <th className="py-2 px-2 text-right">ราคา/หน่วย</th>
-                  <th className="py-2 px-2 text-right">มูลค่ารวม</th>
-                  <th className="py-2 px-2.5 text-right">วันที่ต้องการ</th>
+                  <th className="py-2 px-1 text-center">รูป</th>
+                  <th className="py-2 px-1.5 text-right">จำนวน</th>
+                  <th className="py-2 px-1.5 text-right">ราคา</th>
+                  <th className="py-2 px-2 text-right">ยอดรวม</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {customer.interestedProducts.map((p) => (
                   <tr key={p.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-2 px-2.5 font-medium text-slate-900">
-                      <div>{p.name}</div>
+                      <div className="truncate max-w-[120px]">{p.name}</div>
                       {p.subName && (
-                        <div className="text-[10px] text-slate-400 font-normal truncate max-w-[120px]">
+                        <div className="text-[10px] text-slate-400 font-normal truncate max-w-[110px]">
                           {p.subName}
                         </div>
                       )}
                     </td>
-                    <td className="py-2 px-2 text-center">
+                    <td className="py-2 px-1 text-center">
                       <img
                         src={p.imageUrl || '/assets/pork_belly.jpg'}
                         alt={p.name}
-                        className="w-8 h-8 rounded object-cover mx-auto border border-slate-200"
+                        className="w-7 h-7 rounded object-cover mx-auto border border-slate-200"
                       />
                     </td>
-                    <td className="py-2 px-2 text-right font-semibold text-slate-800">
+                    <td className="py-2 px-1.5 text-right font-semibold text-slate-800 whitespace-nowrap">
                       {p.qty}
                     </td>
-                    <td className="py-2 px-2 text-right text-slate-600">{p.unitPrice}</td>
-                    <td className="py-2 px-2 text-right font-bold text-emerald-700">
+                    <td className="py-2 px-1.5 text-right text-slate-600 whitespace-nowrap">
+                      {p.unitPrice}
+                    </td>
+                    <td className="py-2 px-2 text-right font-bold text-emerald-700 whitespace-nowrap">
                       {p.total}
                     </td>
-                    <td className="py-2 px-2.5 text-right text-slate-600">{p.date}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Delivery Schedule Alert Note */}
-          <div className="mt-2.5 p-2.5 bg-amber-50/90 border border-amber-200/90 rounded-lg text-[11px] text-amber-900 leading-snug flex items-start gap-2">
-            <CheckCircle2 size={14} className="text-amber-600 shrink-0 mt-0.5" />
+          <div className="mt-2.5 p-2 bg-amber-50/90 border border-amber-200/90 rounded-lg text-[11px] text-amber-900 leading-snug flex items-start gap-1.5">
+            <CheckCircle2 size={13} className="text-amber-600 shrink-0 mt-0.5" />
             <div>
-              <span className="font-bold">วันที่ต้องการส่งสินค้าตรงกับตารางส่งประจำ:</span>{' '}
+              <span className="font-bold">ตรงตามตารางส่งประจำ:</span>{' '}
               {customer.interestedProducts[0]?.note ||
-                'จัดส่งโดยรถห้องเย็น A&C Fleet มีรอบส่งประจำตรงตามรอบที่ลูกค้าระบุ'}
+                'จัดส่งโดยรถห้องเย็น A&C Fleet มีรอบส่งตรงกับวันที่ระบุ'}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Action Buttons (Workflow Triggers) */}
-      <div className="p-3 bg-slate-50 border-t border-slate-200 space-y-2">
+      {/* Sticky Bottom Footer Actions */}
+      <div className="sticky bottom-0 z-10 p-3 bg-slate-50 border-t border-slate-200 space-y-2 shadow-sm shrink-0">
         <button
           onClick={() => onActionClick('ส่งเข้า LINE กลุ่มทีมขาย', customer)}
-          className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-sm"
+          className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs"
         >
-          <Send size={14} />
+          <Send size={13} />
           <span>ส่งเข้า LINE กลุ่มทีมขาย</span>
         </button>
 
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => onActionClick('สร้างใบเสนอราคา (PDF)', customer)}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold transition-all"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold transition-all shadow-2xs"
           >
-            <FileText size={13} className="text-slate-500" />
-            <span>สร้างใบเสนอราคา (PDF)</span>
+            <FileText size={12} className="text-slate-500" />
+            <span>ใบเสนอราคา (PDF)</span>
           </button>
           <button
             onClick={() => onActionClick('สร้าง Sales Order', customer)}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold transition-all"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold transition-all shadow-2xs"
           >
-            <ShoppingCart size={13} className="text-slate-500" />
+            <ShoppingCart size={12} className="text-slate-500" />
             <span>สร้าง Sales Order</span>
           </button>
         </div>
