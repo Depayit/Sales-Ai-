@@ -117,6 +117,68 @@ export interface CampaignCustomer {
   status: 'pending' | 'approved' | 'rejected';
 }
 
+export type CompanyCode = 'AC' | 'TD';
+
+export type CVStatus =
+  | 'draft'          // ร่าง
+  | 'pending_sales'  // ส่งฝ่ายขาย
+  | 'processing'     // กำลังดำเนินการ
+  | 'need_info'      // ขอข้อมูลเพิ่ม
+  | 'completed'      // เปิด CV แล้ว
+  | 'rejected';      // ไม่อนุมัติ
+
+export interface CVDocument {
+  id: string;
+  type: 'id_card' | 'company_cert' | 'location_map' | 'other';
+  title: string;
+  fileName: string;
+  fileUrl: string;
+  status: 'received' | 'pending_review' | 'approved' | 'rejected' | 'missing';
+  uploadedAt: string;
+  note?: string;
+}
+
+export interface TradingTermsData {
+  company: CompanyCode;
+  deliveryZoneText: string;
+  isFreeDelivery: boolean;
+  moq: string;
+  paymentMethod: string;
+  deliverySchedule: string;
+  deliveryLeadTime: string;
+  isOutrightSale: boolean;
+  termsNotes?: string;
+}
+
+export interface CVTimelineItem {
+  id: string;
+  time: string;
+  action: string;
+  status: 'success' | 'pending' | 'warning' | 'rejected';
+  operator: string;
+}
+
+export interface CVRegistrationRecord {
+  company: CompanyCode;
+  tempId: string;
+  status: CVStatus;
+  statusLabel: string;
+  cvCode?: string;
+  existingCvAC?: string | null;
+  existingCvTD?: string | null;
+  businessName: string;
+  contactPerson: string;
+  phone: string;
+  customerType: string;
+  address: string;
+  googleMapsUrl: string;
+  documents: CVDocument[];
+  tradingTerms: TradingTermsData;
+  timeline: CVTimelineItem[];
+  missingFields: string[];
+  staffNotes?: string;
+}
+
 export interface Customer {
   id: string;
   name: string;
@@ -152,6 +214,8 @@ export interface Customer {
     allowDiscretion: boolean;
     ruleText: string;
   };
+  // Module 04 integration:
+  cvRegistration?: CVRegistrationRecord;
 }
 
 export interface WorkflowStep {

@@ -7,12 +7,20 @@ import { ChatPanel } from './components/ChatPanel';
 import { CustomerDetailPanel } from './components/CustomerDetailPanel';
 import { Module02Qualification } from './components/Module02Qualification';
 import { Module03Presentation } from './components/Module03Presentation';
+import { Module04TradingTerms } from './components/Module04TradingTerms';
 import { DemoModal } from './components/DemoModal';
 import { MOCK_CUSTOMERS } from './mockData';
-import type { Customer, FilterTab, ProductSKU, ChatMessage, MediaHistoryItem } from './types';
+import type {
+  Customer,
+  FilterTab,
+  ProductSKU,
+  ChatMessage,
+  MediaHistoryItem,
+  CVRegistrationRecord,
+} from './types';
 
 export const App: React.FC = () => {
-  const [activeModule, setActiveModule] = useState<string>('03');
+  const [activeModule, setActiveModule] = useState<string>('04');
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('cust-1');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -64,7 +72,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectModule = (moduleId: string) => {
-    if (['01', '02', '03'].includes(moduleId)) {
+    if (['01', '02', '03', '04'].includes(moduleId)) {
       setActiveModule(moduleId);
     } else {
       setModalState({
@@ -143,6 +151,27 @@ export const App: React.FC = () => {
             interestedProducts: newInterestedProduct
               ? [...c.interestedProducts, newInterestedProduct]
               : c.interestedProducts,
+          };
+        }
+        return c;
+      })
+    );
+  };
+
+  // Update CV Registration state on customer
+  const handleUpdateCV = (customerId: string, updatedRecord: Partial<CVRegistrationRecord>) => {
+    setCustomers((prevCustomers) =>
+      prevCustomers.map((c) => {
+        if (c.id === customerId) {
+          const currentCv = c.cvRegistration;
+          const mergedCv = currentCv
+            ? { ...currentCv, ...updatedRecord }
+            : (updatedRecord as CVRegistrationRecord);
+
+          return {
+            ...c,
+            cvRegistration: mergedCv,
+            statusLabel: mergedCv.status === 'completed' ? 'เปิด CV แล้ว' : c.statusLabel,
           };
         }
         return c;
@@ -241,7 +270,7 @@ export const App: React.FC = () => {
         <WorkflowStepper
           currentStep={activeModule}
           onStepClick={(step) => {
-            if (['01', '02', '03'].includes(step)) {
+            if (['01', '02', '03', '04'].includes(step)) {
               setActiveModule(step);
             } else {
               setModalState({
@@ -334,6 +363,18 @@ export const App: React.FC = () => {
               customers={customers}
               onSelectCustomer={handleSelectCustomer}
               onSendMediaToChat={handleSendMediaToChat}
+              onNavigateToModule={handleSelectModule}
+            />
+          </main>
+        )}
+
+        {activeModule === '04' && (
+          <main className="flex-1 flex overflow-hidden min-h-0 bg-slate-100 relative">
+            <Module04TradingTerms
+              customer={selectedCustomer}
+              customers={customers}
+              onSelectCustomer={handleSelectCustomer}
+              onUpdateCV={handleUpdateCV}
               onNavigateToModule={handleSelectModule}
             />
           </main>

@@ -12,9 +12,9 @@ const STEPS: StepperStep[] = [
   { step: '00', title: 'ค้นหาข้อมูลเก่า', sub: 'เช็ค Tag Route', status: 'completed' },
   { step: '01', title: 'ตรวจสอบจังหวัด', sub: 'พื้นที่จัดส่ง', status: 'active' },
   { step: '02', title: 'สอบถามความต้องการ', sub: 'สินค้า/จำนวน/วันส่ง', status: 'upcoming' },
-  { step: '03', title: 'นำเสนอประเภทธุรกิจ', sub: 'เงื่อนไขการค้า', status: 'upcoming' },
-  { step: '04', title: 'ส่งรูปสินค้าและราคา', sub: 'แจกแจงยอดรวม', status: 'upcoming' },
-  { step: '05', title: 'ยืนยันคำสั่งซื้อ', sub: 'เปิดรหัส CV', status: 'upcoming' },
+  { step: '03', title: 'นำเสนอสินค้า & สื่อ', sub: 'รูปภาพ/ราคา/แคมเปญ', status: 'upcoming' },
+  { step: '04', title: 'แจ้งเงื่อนไขการค้า', sub: 'เปิดรหัสลูกค้า (CV)', status: 'upcoming' },
+  { step: '05', title: 'ยืนยันคำสั่งซื้อ', sub: 'จัดทำ PO ภายใน', status: 'upcoming' },
   { step: '06', title: 'ส่งให้ทีมขาย', sub: 'วางแผนจัดส่ง', status: 'upcoming' },
 ];
 
