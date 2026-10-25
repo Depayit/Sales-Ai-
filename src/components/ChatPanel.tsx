@@ -23,7 +23,6 @@ interface ChatPanelProps {
   onToggleProfileDrawer?: () => void;
   onBackToInbox?: () => void;
   showBackToInbox?: boolean;
-  onOpenSandbox?: () => void;
 }
 
 export const ChatPanel: React.FC<ChatPanelProps> = ({
@@ -32,7 +31,6 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
   onToggleProfileDrawer,
   onBackToInbox,
   showBackToInbox,
-  onOpenSandbox,
 }) => {
   const [inputText, setInputText] = useState('');
   const [messages, setMessages] = useState<ChatMessage[]>(customer.chatMessages);
@@ -141,16 +139,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
 
         {/* Action icons & Sandbox Trigger */}
         <div className="flex items-center gap-1.5 text-slate-500 shrink-0">
-          {onOpenSandbox && (
-            <button
-              onClick={onOpenSandbox}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-800 text-xs font-bold transition-colors cursor-pointer mr-1"
-              title="เปิดห้องแชทจำลองสำหรับทดสอบ (Sandbox) - แชทว่างเปล่า & ล้างแชทได้"
-            >
-              <span>🧪</span>
-              <span className="hidden sm:inline">ห้องแชททดสอบ AI</span>
-            </button>
-          )}
+
 
           <button
             className="p-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-colors"

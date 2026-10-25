@@ -336,7 +336,6 @@ export const App: React.FC = () => {
                   onToggleProfileDrawer={() => setIsProfileDrawerOpen(true)}
                   onBackToInbox={() => setMobileView('inbox')}
                   showBackToInbox={isMobile}
-                  onOpenSandbox={() => setIsChatSandboxOpen(true)}
                 />
               </div>
             )}
