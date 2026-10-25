@@ -853,12 +853,22 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
                     จัดกลุ่มการจัดส่ง (Delivery Group)
                   </span>
                 </div>
-                <button
-                  onClick={handleAddNewGroup}
-                  className="px-2 py-0.5 rounded bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 text-[10px] font-bold"
-                >
-                  + เพิ่มกรุ๊ป
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setAllocationModal(true)}
+                    className="px-2.5 py-1 rounded bg-amber-50 border border-amber-300 text-amber-900 hover:bg-amber-100 text-[10px] font-bold flex items-center gap-1 shadow-2xs transition-all"
+                    title="ระบบจัดสรรออเดอร์ (เกลี่ยยอด) — ตาม Slide 26"
+                  >
+                    <SlidersHorizontal size={11} className="text-amber-700" />
+                    <span>เกลี่ยยอด (Slide 26)</span>
+                  </button>
+                  <button
+                    onClick={handleAddNewGroup}
+                    className="px-2.5 py-1 rounded bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 text-[10px] font-bold transition-all"
+                  >
+                    + เพิ่มกรุ๊ป
+                  </button>
+                </div>
               </div>
               <div className="text-[10px] text-slate-500">
                 สายเดียวกันมีหลายกรุ๊ปในวันเดียวกันได้ ({currentRouteGroups.length} กรุ๊ป)
@@ -1733,10 +1743,51 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex justify-end">
+            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  // AI Auto Balance
+                  const allOrders = [
+                    ...(deliveryGroups[0]?.orders || []),
+                    ...(deliveryGroups[1]?.orders || []),
+                  ];
+                  const sorted = [...allOrders].sort((a, b) => b.weightKg - a.weightKg);
+                  const grpAOrders: typeof sorted = [];
+                  const grpBOrders: typeof sorted = [];
+                  let weightA = 0;
+                  let weightB = 0;
+
+                  sorted.forEach((item) => {
+                    if (weightA <= weightB) {
+                      grpAOrders.push({ ...item, groupId: 'grp-a' });
+                      weightA += item.weightKg;
+                    } else {
+                      grpBOrders.push({ ...item, groupId: 'grp-b' });
+                      weightB += item.weightKg;
+                    }
+                  });
+
+                  setDeliveryGroups((prev) =>
+                    prev.map((g) => {
+                      if (g.id === 'grp-a') {
+                        return { ...g, orders: grpAOrders, totalWeightKg: weightA };
+                      }
+                      if (g.id === 'grp-b') {
+                        return { ...g, orders: grpBOrders, totalWeightKg: weightB };
+                      }
+                      return g;
+                    })
+                  );
+                }}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold transition-all shadow-2xs"
+              >
+                <Sparkles size={13} className="text-amber-700" />
+                <span>AI เกลี่ยยอดอัตโนมัติ (Auto-Balance)</span>
+              </button>
+
               <button
                 onClick={() => setAllocationModal(false)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs"
               >
                 บันทึกการเกลี่ยยอด
               </button>

@@ -11,6 +11,8 @@ import { Module04TradingTerms } from './components/Module04TradingTerms';
 import { Module05OrderPO } from './components/Module05OrderPO';
 import { Module06ManagerPlanning } from './components/Module06ManagerPlanning';
 import { DemoModal } from './components/DemoModal';
+import { DecisionRightsModal } from './components/DecisionRightsModal';
+import { ChatSandboxModal } from './components/ChatSandboxModal';
 import { MOCK_CUSTOMERS } from './mockData';
 import type {
   Customer,
@@ -43,6 +45,9 @@ export const App: React.FC = () => {
     title: '',
     actionType: '',
   });
+
+  const [isDecisionRightsOpen, setIsDecisionRightsOpen] = useState<boolean>(false);
+  const [isChatSandboxOpen, setIsChatSandboxOpen] = useState<boolean>(false);
 
   // Handle responsive breakpoint changes
   useEffect(() => {
@@ -266,6 +271,8 @@ export const App: React.FC = () => {
               setIsSidebarCollapsed((prev) => !prev);
             }
           }}
+          onOpenDecisionRights={() => setIsDecisionRightsOpen(true)}
+          onOpenChatSandbox={() => setIsChatSandboxOpen(true)}
         />
 
         {/* Clean Pipeline Stepper */}
@@ -315,6 +322,7 @@ export const App: React.FC = () => {
                   onToggleProfileDrawer={() => setIsProfileDrawerOpen(true)}
                   onBackToInbox={() => setMobileView('inbox')}
                   showBackToInbox={isMobile}
+                  onOpenSandbox={() => setIsChatSandboxOpen(true)}
                 />
               </div>
             )}
@@ -353,6 +361,8 @@ export const App: React.FC = () => {
           <main className="flex-1 flex overflow-hidden min-h-0 bg-slate-100 relative">
             <Module02Qualification
               customer={selectedCustomer}
+              customers={customers}
+              onSelectCustomer={handleSelectCustomer}
               onNavigateToModule03={() => setActiveModule('03')}
             />
           </main>
@@ -411,6 +421,18 @@ export const App: React.FC = () => {
         title={modalState.title}
         actionType={modalState.actionType}
         customer={selectedCustomer}
+      />
+
+      {/* Decision Rights Modal (Slide 29) */}
+      <DecisionRightsModal
+        isOpen={isDecisionRightsOpen}
+        onClose={() => setIsDecisionRightsOpen(false)}
+      />
+
+      {/* Interactive AI Chat Sandbox Modal (Empty start + Clear Chat + Autonomous Logic) */}
+      <ChatSandboxModal
+        isOpen={isChatSandboxOpen}
+        onClose={() => setIsChatSandboxOpen(false)}
       />
     </div>
   );

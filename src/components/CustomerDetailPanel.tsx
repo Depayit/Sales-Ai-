@@ -18,6 +18,7 @@ import {
   Check,
 } from 'lucide-react';
 import type { Customer, CustomerTag } from '../types';
+import { CustomerCardModal } from './CustomerCardModal';
 
 interface CustomerDetailPanelProps {
   customer: Customer;
@@ -37,6 +38,7 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
   const [isAddingTag, setIsAddingTag] = useState(false);
   const [newTagText, setNewTagText] = useState('');
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
 
   React.useEffect(() => {
     setTags(customer.tags);
@@ -130,8 +132,15 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
               <h3 className="text-base font-bold text-slate-900 tracking-tight truncate">
                 {customer.name}
               </h3>
-              <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full shrink-0">
-                Lead ID: {customer.id.toUpperCase()}
+              <button
+                onClick={() => setIsCardModalOpen(true)}
+                className="text-[10px] font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-full shrink-0 transition-colors flex items-center gap-1"
+                title="เปิดหน้าจอ Customer Card & Tag Rules (สไลด์ 5)"
+              >
+                <span>Customer Card</span>
+              </button>
+              <span className="text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full shrink-0">
+                {customer.id.toUpperCase()}
               </span>
             </div>
 
@@ -293,13 +302,22 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
             <span className="text-xs font-bold text-slate-800">
               Tag ของลูกค้า ({tags.length})
             </span>
-            <button
-              onClick={() => setIsAddingTag(true)}
-              className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
-            >
-              <Plus size={12} />
-              <span>เพิ่ม Tag</span>
-            </button>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setIsCardModalOpen(true)}
+                className="text-[10px] font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 border border-purple-200 px-2 py-0.5 rounded-md flex items-center gap-1 transition-colors"
+                title="จัดการ Tag 4 หมวด & ตรวจสอบลูกค้ารายซ้ำ (สไลด์ 5)"
+              >
+                <span>Tag 4 หมวด (Slide 5)</span>
+              </button>
+              <button
+                onClick={() => setIsAddingTag(true)}
+                className="text-[11px] font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-0.5"
+              >
+                <Plus size={12} />
+                <span>เพิ่ม Tag</span>
+              </button>
+            </div>
           </div>
 
           {isAddingTag && (
@@ -445,6 +463,14 @@ export const CustomerDetailPanel: React.FC<CustomerDetailPanelProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Customer Card & Tag Rules Modal (Slide 5) */}
+      <CustomerCardModal
+        isOpen={isCardModalOpen}
+        onClose={() => setIsCardModalOpen(false)}
+        customer={customer}
+        onUpdateCustomerTags={setTags}
+      />
     </div>
   );
 };

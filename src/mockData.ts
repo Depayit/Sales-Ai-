@@ -2033,4 +2033,544 @@ export const MOCK_LINE_HISTORY: LineSendHistoryItem[] = [
   },
 ];
 
+// ==========================================
+// MODULE 02: AI Lead Qualification & Buying DNA (Slide 8-12)
+// ==========================================
+
+export const MODULE_02_STATS = {
+  totalLeads: 128,
+  totalLeadsDiff: '+12 วันนี้',
+  aiHandledCount: 112,
+  aiHandledPercent: '87.5%',
+  salesHandledCount: 16,
+  salesHandledPercent: '12.5%',
+  newLeadsCount: 28,
+  chattingCount: 34,
+  checkingStockCount: 26,
+  orderedCount: 18,
+  planningTruckCount: 15,
+  outOfRouteCount: 2,
+};
+
+export const MOCK_BUYING_DNA_MAP: Record<string, import('./types').CustomerBuyingDNA> = {
+  'cust-1': {
+    factors: {
+      price: {
+        name: 'ราคา (Price Sensitivity)',
+        score: 80,
+        highlight: 'หลักเกณฑ์ขอลดราคา / ไวต่อราคากลาง',
+        detail: 'สนใจราคาส่งปริมาณ 500 กก. ขึ้นไป ขอส่วนลดตามวอลุ่ม',
+        color: '#f59e0b',
+      },
+      delivery: {
+        name: 'การจัดส่ง (Delivery & Urgency)',
+        score: 70,
+        highlight: 'เส้นทาง R1 / ส่งสัปดาห์ละ 3 ครั้ง',
+        detail: 'ต้องการรับช่วงเช้าตรู่ก่อน 07:00 น. หน้าร้านมีที่จอดรถ',
+        color: '#3b82f6',
+      },
+      quality: {
+        name: 'คุณภาพ (Spec & Consistency)',
+        score: 90,
+        highlight: 'สเปกทำหมูกรอบ หนังบางกรอบ มัน 30% เนื้อ 70%',
+        detail: 'เน้นความสดใหม่และมาตรฐานโรงเชือด A&C เป็นพิเศษ',
+        color: '#10b981',
+      },
+      terms: {
+        name: 'เงื่อนไข (Terms & Payment)',
+        score: 60,
+        highlight: 'COD เก็บเงินปลายทาง / มัดจำตามรอบ',
+        detail: 'จ่ายเงินสดหรือโอนหน้าร้านเมื่อตรวจรับสินค้า',
+        color: '#8b5cf6',
+      },
+      product: {
+        name: 'สินค้า (SKU & Volume Readiness)',
+        score: 85,
+        highlight: 'เศษสามชั้น 500 กก./สัปดาห์ สม่ำเสมอ',
+        detail: 'มีตู้แช่ขนาดใหญ่รองรับวัตถุดิบ 1,000 กก.',
+        color: '#ec4899',
+      },
+    },
+    recommendedProducts: [
+      {
+        skuName: 'เศษสามชั้น (สำหรับทำหมูกรอบ)',
+        skuCode: 'PORK-BELLY-01',
+        confidence: 92,
+        reason: 'วิเคราะห์จากเมนูหลัก ยอดขายหมูกรอบหน้าร้านโตต่อเนื่อง',
+        tag: 'สินค้าแนะนำหลัก',
+      },
+      {
+        skuName: 'ซี่โครงหมูแผ่นสแปร์ริบส์',
+        skuCode: 'PORK-RIB-02',
+        confidence: 78,
+        reason: 'มีแผนเปิดเมนูต้มซุปกระดูกหมูเสริมยอดขาย',
+        tag: 'เมนูแนะนำเพิ่ม',
+      },
+      {
+        skuName: 'สันคอหมูคัดเกรด',
+        skuCode: 'PORK-COLLAR-02',
+        confidence: 70,
+        reason: 'รองรับเมนูปิ้งย่างและหมูทอดน้ำปลา',
+        tag: 'ทดลองสินค้า',
+      },
+    ],
+    notes: 'ลูกค้าเป็นร้านอาหารขนาดใหญ่ สั่งต่อเนื่องทุกสัปดาห์ มีความน่าเชื่อถือสูง',
+  },
+  'cust-new-1': {
+    factors: {
+      price: {
+        name: 'ราคา (Price Sensitivity)',
+        score: 75,
+        highlight: 'รับราคาเปิดตลาด 88 บาท/กก.',
+        detail: 'ยอมรับราคาล็อตแรกเพื่อทดลองคุณภาพเนื้อ',
+        color: '#f59e0b',
+      },
+      delivery: {
+        name: 'การจัดส่ง (Delivery & Urgency)',
+        score: 85,
+        highlight: 'ต้องการรับด่วน 22 มี.ค. 2568',
+        detail: 'ส่งตามรอบปกติ รามคำแหง 120',
+        color: '#3b82f6',
+      },
+      quality: {
+        name: 'คุณภาพ (Spec & Consistency)',
+        score: 95,
+        highlight: 'เน้นสเปกหมูกรอบ กรอบฟูพิเศษ',
+        detail: 'ต้องการมันไม่เกิน 30% หนังเรียบสวย',
+        color: '#10b981',
+      },
+      terms: {
+        name: 'เงื่อนไข (Terms & Payment)',
+        score: 65,
+        highlight: 'โอนมัดจำก่อนส่ง / จ่ายส่วนที่เหลือหน้างาน',
+        detail: 'เอกสารครบ ยื่นบัตรประชาชนแล้ว',
+        color: '#8b5cf6',
+      },
+      product: {
+        name: 'สินค้า (SKU & Volume Readiness)',
+        score: 80,
+        highlight: 'เศษสามชั้น 200 กก./ครั้ง',
+        detail: 'คาดการณ์ขยายเป็น 500 กก. ในเดือนถัดไป',
+        color: '#ec4899',
+      },
+    },
+    recommendedProducts: [
+      {
+        skuName: 'เศษสามชั้น (สำหรับทำหมูกรอบ)',
+        skuCode: 'PORK-BELLY-01',
+        confidence: 95,
+        reason: 'ตรงตามชื่อร้านโคตรฟูหมูกรอบ ต้องการสินค้าเฉพาะทาง',
+        tag: 'สินค้าตรงสเปก',
+      },
+      {
+        skuName: 'หมูบดอนามัย เกรด A',
+        skuCode: 'PORK-MINCED-04',
+        confidence: 72,
+        reason: 'ใช้ผสมไส้หรือเมนูเสริมของร้าน',
+        tag: 'สินค้าเสริม',
+      },
+    ],
+    notes: 'ลูกค้ารายใหม่ศักยภาพสูง มีทำเลหน้าร้านดี ปริมาณสั่งซื้อมีแนวโน้มเพิ่มขึ้นเร็ว',
+  },
+};
+
+export const MOCK_OPPORTUNITY_LEADS = [
+  {
+    id: 'opp-1',
+    customerId: 'cust-new-1',
+    customerName: 'ร้านโคตรฟูหมูกรอบ',
+    aiScore: 92,
+    group: 'ready' as const, // พร้อมเสนอ
+    recommendedSku: 'เศษสามชั้น 200 กก.',
+    priceOffer: '88 บาท/กก.',
+    leadReason: 'ลูกค้าเปิด CV ใหม่ เอกสารครบ ยืนยันความต้องการชัดเจน',
+    status: 'พร้อมส่งฝ่ายขาย',
+  },
+  {
+    id: 'opp-2',
+    customerId: 'cust-1',
+    customerName: 'ร้านเจริญพร ขอนแก่น',
+    aiScore: 85,
+    group: 'ready' as const, // พร้อมเสนอ
+    recommendedSku: 'เศษสามชั้น 500 กก.',
+    priceOffer: '68 บาท/กก.',
+    leadReason: 'ลูกค้าประจำ รอบส่ง R1 ตรงวันจันทร์ พุธ ศุกร์',
+    status: 'รอฝ่ายขายคอนเฟิร์ม',
+  },
+  {
+    id: 'opp-3',
+    customerId: 'cust-2',
+    customerName: 'ครัวคุณตั้ม อุดรธานี',
+    aiScore: 78,
+    group: 'ready' as const, // พร้อมเสนอ
+    recommendedSku: 'สันนอกหมู 100 กก.',
+    priceOffer: '125 บาท/กก.',
+    leadReason: 'ร้านอาหารอีสาน สั่งซ้ำทุก 2 สัปดาห์',
+    status: 'ส่งข้อความแล้ว',
+  },
+  {
+    id: 'opp-4',
+    customerId: 'cust-4',
+    customerName: 'หจก. อารีย์ การค้า',
+    aiScore: 72,
+    group: 'review' as const, // ต้องตรวจสอบ
+    recommendedSku: 'หมักชิ้นสวย 800 กก.',
+    priceOffer: '110 บาท/กก.',
+    leadReason: 'ขอเครดิตเทอม 30 วัน ต้องตรวจประวัติการเงิน',
+    status: 'รอตรวจเครดิต',
+  },
+  {
+    id: 'opp-5',
+    customerId: 'cust-7',
+    customerName: 'ร้านส้มตำดอนเมือง',
+    aiScore: 68,
+    group: 'review' as const, // ต้องตรวจสอบ
+    recommendedSku: 'คอหมูย่าง 150 กก.',
+    priceOffer: '175 บาท/กก.',
+    leadReason: 'อยู่นอก Route ปกติ รอฝ่ายขายตรวจรอบพ่วงพิเศษ',
+    status: 'นอกเส้นทาง',
+  },
+  {
+    id: 'opp-6',
+    customerId: 'cust-8',
+    customerName: 'มนตรี รังษิยาสด',
+    aiScore: 62,
+    group: 'unfit' as const, // ไม่เหมาะสม
+    recommendedSku: 'เนื้อสะโพก 600 กก.',
+    priceOffer: '98 บาท/กก.',
+    leadReason: 'ขอลดราคาต่ำกว่าเกณฑ์อนุมัติ Quotation Program',
+    status: 'ไม่อนุมัติราคา',
+  },
+];
+
+export const MOCK_PRODUCT_FIT_SEARCH: Record<
+  string,
+  {
+    skuName: string;
+    matches: {
+      customerId: string;
+      customerName: string;
+      category: string;
+      aiScore: number;
+      fitReason: string;
+      recommendedQty: string;
+      targetPrice: string;
+    }[];
+  }
+> = {
+  'เศษสามชั้น': {
+    skuName: 'เศษสามชั้น (สำหรับทำหมูกรอบ)',
+    matches: [
+      {
+        customerId: 'cust-new-1',
+        customerName: 'ร้านโคตรฟูหมูกรอบ',
+        category: 'ร้านอาหาร / หมูกรอบ',
+        aiScore: 92,
+        fitReason: 'ร้านทำหมูกรอบเฉพาะทาง ต้องการสัดส่วนเนื้อ 70% มัน 30%',
+        recommendedQty: '200 กก.',
+        targetPrice: '88 บาท/กก.',
+      },
+      {
+        customerId: 'cust-1',
+        customerName: 'ร้านเจริญพร ขอนแก่น',
+        category: 'ร้านอาหาร / หมูกรอบ',
+        aiScore: 85,
+        fitReason: 'ซื้อซ้ำต่อเนื่องทุกสัปดาห์ มีตู้แช่เก็บสต็อกได้ 1,000 กก.',
+        recommendedQty: '500 กก.',
+        targetPrice: '68 บาท/กก.',
+      },
+      {
+        customerId: 'cust-3',
+        customerName: 'บ. ฟู้ดส์ จำกัด',
+        category: 'โรงงานแปรรูป',
+        aiScore: 78,
+        fitReason: 'เคยสั่งสินค้าทดแทน กำลังหาซัพพลายเออร์หลักรอบใหม่',
+        recommendedQty: '1,000 กก.',
+        targetPrice: '65 บาท/กก.',
+      },
+      {
+        customerId: 'cust-5',
+        customerName: 'เจ๊พัทยา โคราช',
+        category: 'ร้านอาหารอีสาน',
+        aiScore: 72,
+        fitReason: 'มีเมนูสามชั้นทอดน้ำปลา ยอดสั่งซื้อเพิ่มช่วงเทศกาล',
+        recommendedQty: '150 กก.',
+        targetPrice: '88 บาท/กก.',
+      },
+      {
+        customerId: 'cust-7',
+        customerName: 'ร้านส้มตำดอนเมือง',
+        category: 'ร้านอาหาร / ส้มตำ',
+        aiScore: 68,
+        fitReason: 'สนใจทดลองตลาด แต่ติดเงื่อนไขอยู่นอกสายส่งประจำ',
+        recommendedQty: '100 กก.',
+        targetPrice: '92 บาท/กก.',
+      },
+    ],
+  },
+  'ซี่โครงหมู': {
+    skuName: 'ซี่โครงหมูแผ่นสแปร์ริบส์',
+    matches: [
+      {
+        customerId: 'cust-6',
+        customerName: 'น้องแมน (โรงแรม)',
+        category: 'โรงแรม / จัดเลี้ยง',
+        aiScore: 95,
+        fitReason: 'สเปกบาร์บีคิวโรงแรม ต้องการแผ่นสวยขนาดสม่ำเสมอ',
+        recommendedQty: '350 กก.',
+        targetPrice: '165 บาท/กก.',
+      },
+      {
+        customerId: 'cust-1',
+        customerName: 'ร้านเจริญพร ขอนแก่น',
+        category: 'ร้านอาหาร / หมูกรอบ',
+        aiScore: 82,
+        fitReason: 'ต้องการทำเมนูซุปกระดูกหมูเสริมเมนูหมูกรอบ',
+        recommendedQty: '100 กก.',
+        targetPrice: '160 บาท/กก.',
+      },
+      {
+        customerId: 'cust-4',
+        customerName: 'หจก. อารีย์ การค้า',
+        category: 'ค้าส่งเนื้อสัตว์',
+        aiScore: 75,
+        fitReason: 'ลูกค้ารายย่อยถามหา สั่งเป็นล็อตรายเดือน',
+        recommendedQty: '500 กก.',
+        targetPrice: '155 บาท/กก.',
+      },
+    ],
+  },
+};
+
+// ==========================================
+// MODULE 01: Customer Card & Tag Rules (Slide 5)
+// ==========================================
+
+export const MOCK_DUPLICATE_DETECTION_CASES: import('./types').DuplicateCustomerMatch[] = [
+  {
+    id: 'dup-1',
+    name: 'ร้านโคตรหมูกรอบ',
+    phone: '094-615-6954',
+    taxId: '0105559871234',
+    address: 'รามคำแหง 120 สะพานสูง กรุงเทพมหานคร 10240',
+    similarity: 92,
+    matchReasons: ['เบอร์โทรศัพท์ตรงกัน 100%', 'ชื่อร้านมีความคล้ายคลึง 90%', 'พื้นที่จัดส่งตรงกัน'],
+    status: 'active',
+    existingCardId: 'CUST-20251010-001',
+  },
+  {
+    id: 'dup-2',
+    name: 'ร้านโคตรหมูเก่า สาขา 2',
+    phone: '094-615-6954',
+    address: 'สะพานสูง กรุงเทพมหานคร',
+    similarity: 78,
+    matchReasons: ['เบอร์โทรศัพท์ตรงกัน', 'ประวัติเคยสั่งซื้อในระบบ TD เมื่อ 6 เดือนก่อน'],
+    status: 'archived',
+    existingCardId: 'CUST-20240412-088',
+  },
+];
+
+export const MOCK_FOUR_CATEGORY_TAGS = {
+  target_product: [
+    { id: 'tag-tp-1', label: 'เศษสามชั้น', category: 'target_product', color: '#ef4444' },
+    { id: 'tag-tp-2', label: 'ซี่โครงหมู', category: 'target_product', color: '#f97316' },
+    { id: 'tag-tp-3', label: 'ไส้กรอก', category: 'target_product', color: '#f59e0b' },
+    { id: 'tag-tp-4', label: 'เนื้อสะโพก', category: 'target_product', color: '#10b981' },
+    { id: 'tag-tp-5', label: 'หมูบดอนามัย', category: 'target_product', color: '#06b6d4' },
+  ],
+  trading_terms: [
+    { id: 'tag-tt-1', label: 'COD', category: 'trading_terms', color: '#3b82f6' },
+    { id: 'tag-tt-2', label: 'มัดจำ 30%', category: 'trading_terms', color: '#8b5cf6' },
+    { id: 'tag-tt-3', label: 'เครดิต 15 วัน', category: 'trading_terms', color: '#6366f1' },
+    { id: 'tag-tt-4', label: 'ส่งฟรีรอบ R1', category: 'trading_terms', color: '#14b8a6' },
+  ],
+  promotion: [
+    { id: 'tag-pr-1', label: 'ซื้อ 3 แถม 1', category: 'promotion', color: '#10b981' },
+    { id: 'tag-pr-2', label: 'ราคาพิเศษรายเดือน', category: 'promotion', color: '#059669' },
+    { id: 'tag-pr-3', label: 'ส่วนลดสั่ง > 500 กก.', category: 'promotion', color: '#047857' },
+  ],
+  communication: [
+    { id: 'tag-cm-1', label: 'LINE เป็นหลัก', category: 'communication', color: '#8b5cf6' },
+    { id: 'tag-cm-2', label: 'ส่งโปรโมชั่นสัปดาห์', category: 'communication', color: '#7c3aed' },
+    { id: 'tag-cm-3', label: 'งดโทรช่วงบ่าย', category: 'communication', color: '#6d28d9' },
+  ],
+};
+
+export const MOCK_AI_TAG_SUGGESTIONS: import('./types').AITagSuggestion[] = [
+  {
+    id: 'sug-1',
+    tagLabel: 'สินค้าเป้าหมาย: เนื้อหมูสไลซ์',
+    category: 'target_product',
+    categoryLabel: 'สินค้าเป้าหมาย',
+    reason: 'จากประวัติการซื้อ 3 เดือนล่าสุด มีการสั่งซื้อหมูสไลซ์ต่อเนื่อง 5 ครั้ง',
+    actionType: 'add',
+    suggestedValue: 'เนื้อหมูสไลซ์',
+  },
+  {
+    id: 'sug-2',
+    tagLabel: 'โปรโมชั่น: ราคาพิเศษรายเดือน',
+    category: 'promotion',
+    categoryLabel: 'โปรโมชั่น',
+    reason: 'ลูกค้ามียอดสั่งสม่ำเสมอสัปดาห์ละ 500 กก. เข้าเกณฑ์ราคาส่ง Tier 3',
+    actionType: 'add',
+    suggestedValue: 'ราคาพิเศษรายเดือน',
+  },
+  {
+    id: 'sug-3',
+    tagLabel: 'การสื่อสาร: LINE เป็นหลัก',
+    category: 'communication',
+    categoryLabel: 'การสื่อสาร',
+    reason: 'มักเปิดอ่านและตอบกลับข้อความผ่าน LINE OA ภายใน 3 นาที',
+    actionType: 'add',
+    suggestedValue: 'LINE เป็นหลัก',
+  },
+  {
+    id: 'sug-4',
+    tagLabel: 'เงื่อนไขการค้า: ปรับเป็น มัดจำ 30%',
+    category: 'trading_terms',
+    categoryLabel: 'เงื่อนไขการค้า',
+    reason: 'ออเดอร์แรกก่อนจัดส่งตามนโยบายความเสี่ยงลูกค้ารายใหม่',
+    actionType: 'modify',
+    currentValue: 'COD เก็บปลายทาง',
+    suggestedValue: 'มัดจำ 30%',
+  },
+  {
+    id: 'sug-5',
+    tagLabel: 'เงื่อนไขการค้า: ลด เครดิต 15 วัน',
+    category: 'trading_terms',
+    categoryLabel: 'เงื่อนไขการค้า',
+    reason: 'ลูกค้าชำระเงินตรงเวลาต่อเนื่องมากกว่า 6 บิล',
+    actionType: 'modify',
+    currentValue: 'มัดจำ 30%',
+    suggestedValue: 'เครดิต 15 วัน',
+  },
+];
+
+export const MOCK_TAG_AUDIT_LOGS: import('./types').TagAuditLog[] = [
+  {
+    id: 'log-1',
+    timestamp: '23 ต.ค. 2569 10:32',
+    operator: 'ระบบ AI (Autonomous)',
+    role: 'AI',
+    action: 'AI แนะนำปรับ Tag',
+    tagLabel: 'เนื้อหมูสไลซ์',
+    categoryLabel: 'สินค้าเป้าหมาย',
+  },
+  {
+    id: 'log-2',
+    timestamp: '22 ต.ค. 2569 15:10',
+    operator: 'คุณสมชาย (ฝ่ายขาย)',
+    role: 'Sales',
+    action: 'ฝ่ายขายเพิ่ม Tag',
+    tagLabel: 'ส่งโปรโมชั่นทุกวันศุกร์',
+    categoryLabel: 'การสื่อสาร',
+  },
+  {
+    id: 'log-3',
+    timestamp: '21 ต.ค. 2569 09:20',
+    operator: 'คุณมานิต (ผู้จัดการ)',
+    role: 'Manager',
+    action: 'ผู้จัดการปรับ Tag',
+    tagLabel: 'มัดจำ 30%',
+    categoryLabel: 'เงื่อนไขการค้า',
+  },
+  {
+    id: 'log-4',
+    timestamp: '20 ต.ค. 2569 14:05',
+    operator: 'คุณสมชาย (ฝ่ายขาย)',
+    role: 'Sales',
+    action: 'ฝ่ายขายลบ Tag',
+    tagLabel: 'เครดิต 30 วัน',
+    categoryLabel: 'เงื่อนไขการค้า',
+  },
+];
+
+// ==========================================
+// DECISION RIGHTS: ใครมีสิทธิ์ทำอะไร (Slide 29)
+// ==========================================
+
+export const DECISION_RIGHTS_RULES: import('./types').DecisionRightRule[] = [
+  {
+    role: 'AI',
+    roleName: 'Sales AI (ระบบอัจฉริยะ)',
+    allowedActions: [
+      'รับข้อมูลลูกค้าผ่าน LINE OA ตรวจสอบจังหวัดและสอบถามความต้องการ',
+      'คัดกรอง Lead และคำนวณ Lead Score ตามเกณฑ์อนุมัติ',
+      'แนะนำสินค้าและสื่อการขายที่ผ่านการอนุมัติ (Quotation Program)',
+      'ร่าง PO ภายใน และรวบรวม Sales Plan เบื้องต้น',
+      'ร่าง Warehouse Plan รูปแบบข้อความ LINE ให้ผู้จัดการตรวจ',
+      'แจ้งเตือนงานค้างและแจ้งเตือนมัดจำล่าช้า',
+    ],
+    prohibitedActions: [
+      'ห้ามสร้างราคาหรือใบเสนอราคาที่เป็นทางการเองโดยไม่มีสิทธิ์',
+      'ห้ามตัด ย้าย หรือยกเลิกออเดอร์ของลูกค้าเอง',
+      'ห้ามรับปากวันจัดส่งสินค้าแทนฝ่ายขาย',
+      'ห้ามส่งข้อความหาคลังสินค้าโดยตรงโดยไม่ผ่านการอนุมัติของผู้จัดการ',
+    ],
+    description: 'AI ช่วยเตรียมข้อมูล คัดกรอง แนะนำ และร่างเอกสาร ทำงาน Autonomous ภายใต้กรอบที่กำหนด',
+  },
+  {
+    role: 'Customer',
+    roleName: 'ลูกค้า (ผู้ซื้อสินค้า)',
+    allowedActions: [
+      'เลือกรายการสินค้าและระบุปริมาณ/วันที่ต้องการรับสินค้า',
+      'กดยืนยันคำสั่งซื้อด้วยตนเองผ่านหน้าสรุปบนมือถือ (Mobile Summary)',
+      'อัปโหลดเอกสารยืนยันตัวตน (บัตรประชาชน, หนังสือรับรอง, พิกัด Google Maps)',
+      'ส่งหลักฐานการชำระเงินหรือสลิปมัดจำผ่าน LINE OA',
+    ],
+    prohibitedActions: [
+      'ไม่สามารถปรับลดราคาส่งได้เองนอกเหนือจากตาราง Tier ที่ได้รับอนุมัติ',
+    ],
+    description: 'ยืนยันความถูกต้องของคำสั่งซื้อและเอกสารด้วยตนเองเพื่อป้องกันข้อผิดพลาด',
+  },
+  {
+    role: 'Sales',
+    roleName: 'ฝ่ายขาย (เจ้าหน้าที่ขาย)',
+    allowedActions: [
+      'ตรวจสต็อกสินค้าจริงนอกระบบกับคลัง',
+      'ให้ราคาสินค้าตามสิทธิ์ที่ได้รับอนุมัติใน Quotation Program',
+      'ยืนยันยอดมัดจำจริงจากลูกค้า',
+      'รับเคสลูกค้านอก Route หรือข้อกำหนดพิเศษที่ AI ตัดสินใจไม่ได้',
+      'อนุมัติสื่อการขายในโหมด B และเป็นผู้ส่งสื่อในโหมด C',
+      'ตรวจและอนุมัติ Sales Plan ของบริษัทตนเอง (A&C หรือ TD) ก่อนส่งผู้จัดการ',
+    ],
+    prohibitedActions: [
+      'ห้ามปรับเปลี่ยนข้อความแผนจัดส่งของบริษัทอื่น',
+      'ห้ามส่งแผนจัดรถให้คลังสินค้าโดยไม่ผ่านผู้จัดการ',
+    ],
+    description: 'ควบคุมการเจรจาราคาพิเศษ สต็อก และความสัมพันธ์กับลูกค้า',
+  },
+  {
+    role: 'Manager',
+    roleName: 'ผู้จัดการ (ผู้บริหารฝ่ายขายและจัดส่ง)',
+    allowedActions: [
+      'กำหนดกรอบ Tag และ Buying DNA Framework ของระบบ',
+      'ตั้งค่าและปรับเปลี่ยนเวลา Cut-off และ Route Master ในแต่ละสาย',
+      'สร้างและกำหนดโจทย์แคมเปญกระตุ้นยอดขาย (Product Campaign Advisor)',
+      'ตัดสินใจเลือกออเดอร์ จัดสรรรถ คนขับ และลำดับคันในการจัดส่ง',
+      'เกลี่ยยอดออเดอร์และน้ำหนักระหว่าง Delivery Groups',
+      'ตรวจสอบและกดอนุมัติส่ง Warehouse Plan เข้ากลุ่ม LINE คลังสินค้า',
+    ],
+    prohibitedActions: [
+      'ห้ามส่งแผนที่น้ำหนักเกินพิกัดความจุรถบรรทุกโดยไม่แจ้งเตือนคลัง',
+    ],
+    description: 'ผู้มีอำนาจตัดสินใจสูงสุดในกระบวนการจัดสรรรถ แผนการขาย และส่งงานคลัง',
+  },
+  {
+    role: 'CV_Staff',
+    roleName: 'เจ้าหน้าที่เปิดรหัสลูกค้า (CV Staff)',
+    allowedActions: [
+      'ตรวจสอบความถูกต้องของเอกสารนิติบุคคล/บุคคลธรรมดา',
+      'เปิดรหัสลูกค้า CV ในโปรแกรมขายเดิมของบริษัท (A&C หรือ TD)',
+      'บันทึกรหัส CV กลับเข้าสู่ระบบ Sales AI OS เพื่อให้ฝ่ายขายดำเนินการต่อ',
+      'ขอเอกสารเพิ่มเติมกรณีเอกสารไม่ชัดเจน',
+    ],
+    prohibitedActions: [
+      'ห้ามอนุมัติสั่งซื้อหากยังไม่มีรหัส CV ที่ถูกต้อง',
+    ],
+    description: 'รักษามาตรฐานความปลอดภัยทางบัญชีและการควบคุมเครดิตขององค์กร',
+  },
+];
+
+
 

@@ -1,12 +1,19 @@
 import React from 'react';
-import { Bot, User, Menu } from 'lucide-react';
+import { Bot, User, Menu, ShieldCheck } from 'lucide-react';
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
   activeModule?: string;
+  onOpenDecisionRights?: () => void;
+  onOpenChatSandbox?: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, activeModule = '01' }) => {
+export const Header: React.FC<HeaderProps> = ({
+  onToggleSidebar,
+  activeModule = '01',
+  onOpenDecisionRights,
+  onOpenChatSandbox,
+}) => {
   const moduleInfo = {
     '01': {
       num: '01',
@@ -93,6 +100,32 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, activeModule = 
             Demo
           </span>
         </div>
+
+        {/* Chat Simulator / Sandbox Quick Button */}
+        {onOpenChatSandbox && (
+          <button
+            onClick={onOpenChatSandbox}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition-all shadow-2xs border border-emerald-500 cursor-pointer"
+            title="เปิดห้องแชทจำลองสำหรับทดสอบ AI Bot โต้ตอบอัตโนมัติตามกฎ 6 JD"
+          >
+            <span>🧪</span>
+            <span className="hidden sm:inline">ห้องแชททดสอบ AI</span>
+            <span className="text-[9px] bg-emerald-800 text-emerald-200 px-1.5 py-0.2 rounded-full font-mono">Sandbox</span>
+          </button>
+        )}
+
+        {/* Decision Rights Quick Button (Slide 29) */}
+        {onOpenDecisionRights && (
+          <button
+            onClick={onOpenDecisionRights}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-bold transition-all shadow-2xs border border-slate-700"
+            title="ดูสิทธิ์และความรับผิดชอบของแต่ละบทบาท (สไลด์ 29)"
+          >
+            <ShieldCheck size={13} className="text-emerald-400" />
+            <span className="hidden sm:inline">Decision Rights</span>
+            <span className="text-[9px] font-mono text-emerald-300 bg-emerald-950/80 px-1.5 py-0.2 rounded-full border border-emerald-800/60">Slide 29</span>
+          </button>
+        )}
 
         {/* User Profile */}
         <div className="flex items-center gap-2 pl-2 border-l border-slate-200">

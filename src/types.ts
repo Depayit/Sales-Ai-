@@ -74,6 +74,32 @@ export interface ProductSKU {
   highlightNote?: string;
 }
 
+export interface BuyingDNAFactor {
+  name: string;
+  score: number;
+  highlight: string;
+  detail: string;
+  color: string;
+}
+
+export interface CustomerBuyingDNA {
+  factors: {
+    price: BuyingDNAFactor;
+    delivery: BuyingDNAFactor;
+    quality: BuyingDNAFactor;
+    terms: BuyingDNAFactor;
+    product: BuyingDNAFactor;
+  };
+  recommendedProducts: {
+    skuName: string;
+    skuCode: string;
+    confidence: number;
+    reason: string;
+    tag: string;
+  }[];
+  notes: string;
+}
+
 export interface Module02Qualification {
   interestedSku: string;
   expectedQty: string;
@@ -85,6 +111,57 @@ export interface Module02Qualification {
   tags: string[];
   routeFeasibility: string;
   note: string;
+  leadStage?: 'new' | 'chatting' | 'checking_stock' | 'ordered' | 'planning_truck' | 'out_of_route';
+  buyingPattern?: 'once' | 'occasional' | 'regular';
+  monthlyVolumeEst?: string;
+  constraints?: {
+    deliveryTime?: string;
+    locationType?: string;
+    packaging?: string;
+    paymentTerm?: string;
+    specialNotes?: string;
+  };
+}
+
+export interface DuplicateCustomerMatch {
+  id: string;
+  name: string;
+  phone: string;
+  taxId?: string;
+  address: string;
+  similarity: number;
+  matchReasons: string[];
+  status: 'active' | 'archived';
+  existingCardId: string;
+}
+
+export interface AITagSuggestion {
+  id: string;
+  tagLabel: string;
+  category: 'target_product' | 'trading_terms' | 'promotion' | 'communication';
+  categoryLabel: string;
+  reason: string;
+  actionType: 'add' | 'modify';
+  currentValue?: string;
+  suggestedValue: string;
+}
+
+export interface TagAuditLog {
+  id: string;
+  timestamp: string;
+  operator: string;
+  role: 'AI' | 'Sales' | 'Manager';
+  action: string;
+  tagLabel: string;
+  categoryLabel: string;
+}
+
+export interface DecisionRightRule {
+  role: 'AI' | 'Customer' | 'Sales' | 'Manager' | 'CV_Staff';
+  roleName: string;
+  allowedActions: string[];
+  prohibitedActions: string[];
+  description: string;
 }
 
 export interface MediaHistoryItem {
@@ -206,8 +283,11 @@ export interface Customer {
   interestedProducts: InterestedProduct[];
   chatMessages: ChatMessage[];
   routeMapUrl?: string;
+  taxId?: string;
+  customerCardCode?: string;
   // Module 02 & 03 integrations:
   qualification?: Module02Qualification;
+  buyingDNA?: CustomerBuyingDNA;
   mediaHistory?: MediaHistoryItem[];
   pricingRights?: {
     approvedMode: MediaApprovalMode;
