@@ -1212,6 +1212,17 @@ export const Module04TradingTerms: React.FC<Module04TradingTermsProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* Sticky Action Footer */}
+              <div className="pt-3 border-t border-slate-200 mt-2">
+                <button
+                  onClick={() => onNavigateToModule('05')}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs"
+                >
+                  <span>ส่งต่อโมดูล 05 ยืนยันคำสั่งซื้อ + PO ภายใน</span>
+                  <ArrowRight size={14} />
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -1624,6 +1635,17 @@ export const Module04TradingTerms: React.FC<Module04TradingTermsProps> = ({
                     พิมพ์เบอร์โทรและกดค้นหา เพื่อตรวจสอบประวัติ CV เดิมในฐานข้อมูล
                   </div>
                 )}
+              </div>
+
+              {/* Sticky Action Footer */}
+              <div className="pt-2 border-t border-slate-200 mt-auto shrink-0">
+                <button
+                  onClick={() => onNavigateToModule('05')}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs"
+                >
+                  <span>ส่งต่อโมดูล 05 ยืนยันคำสั่งซื้อ + PO ภายใน</span>
+                  <ArrowRight size={14} />
+                </button>
               </div>
             </div>
           </div>

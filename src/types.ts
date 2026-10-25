@@ -225,3 +225,91 @@ export interface WorkflowStep {
   isActive: boolean;
   isCompleted: boolean;
 }
+
+export type StockCheckStatus = 'pending' | 'in_stock' | 'out_of_stock' | 'partial';
+
+export type OrderStatus =
+  | 'draft'
+  | 'pending_customer'
+  | 'pending_stock'
+  | 'confirmed'
+  | 'po_generated'
+  | 'in_sales_plan'
+  | 'cancelled';
+
+export interface OrderItem {
+  id: string;
+  skuCode: string;
+  name: string;
+  subName?: string;
+  quantity: number;
+  unit: string;
+  weightKg: number;
+  unitPrice: number;
+  totalPrice: number;
+  note?: string;
+}
+
+export interface InternalPO {
+  poNumber: string;
+  orderId: string;
+  company: CompanyCode;
+  createdAt: string;
+  createdBy: string;
+  approvedBy: string;
+  totalAmount: number;
+  totalWeightKg: number;
+  status: 'draft' | 'approved' | 'sent_to_plan';
+  pdfFileName: string;
+}
+
+export interface OrderRecord {
+  id: string; // e.g. ORD-2026-001
+  customerId: string;
+  customerName: string;
+  contactPerson: string;
+  phone: string;
+  company: CompanyCode;
+  cvCode: string;
+  orderDate: string;
+  requestedDeliveryDate: string;
+  routeCode: string;
+  routeDays: string;
+  deliveryAddress: string;
+  items: OrderItem[];
+  totalAmount: number;
+  totalWeightKg: number;
+  customerConfirmation: {
+    isConfirmed: boolean;
+    confirmedAt?: string;
+    method?: 'mobile_summary' | 'line';
+  };
+  stockCheck: {
+    status: StockCheckStatus;
+    checkedBy?: string;
+    checkedAt?: string;
+    notes?: string;
+  };
+  salesConfirmation: {
+    isConfirmed: boolean;
+    confirmedBy?: string;
+    confirmedAt?: string;
+    orderRef?: string;
+  };
+  internalPO?: InternalPO;
+  status: OrderStatus;
+  customerNotes?: string;
+}
+
+export interface SalesPlanSummary {
+  company: CompanyCode;
+  date: string;
+  routeCode: string;
+  orderCount: number;
+  totalWeightKg: number;
+  totalAmount: number;
+  status: 'draft' | 'sales_approved' | 'submitted_to_manager';
+  approvedBy?: string;
+  submittedAt?: string;
+  orders: OrderRecord[];
+}
