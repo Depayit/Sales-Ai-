@@ -313,3 +313,83 @@ export interface SalesPlanSummary {
   submittedAt?: string;
   orders: OrderRecord[];
 }
+
+// ==========================================
+// MODULE 06: Manager Planning & Warehouse Plan
+// ==========================================
+
+export interface RouteMasterItem {
+  id: string;
+  name: string;
+  category: 'morning' | 'night';
+  provinces: string[];
+  operatingDays: string[];
+  operatingDaysSummary: string;
+  cutoffRule: string;
+  deliveryArrivalRule: string;
+  defaultDriver: string;
+  driverPhone: string;
+  defaultVehicle: string;
+  vehicleCapacityKg: number;
+  isActive: boolean;
+  notes?: string;
+}
+
+export interface PlanningOrderItem {
+  orderId: string;
+  poNumber: string; // 'PO-001', 'SO-003'
+  customerId: string;
+  customerName: string;
+  company: CompanyCode; // 'AC' | 'TD'
+  routeId: string;
+  routeName: string;
+  requestedDate: string;
+  productName: string;
+  skuCode: string;
+  quantity: number;
+  unit: string;
+  weightKg: number;
+  approvedUnitPrice: number;
+  totalPrice: number;
+  status: 'ready_delivery' | 'pending_deposit'; // 'พร้อมจัดส่ง' (PO) หรือ 'รอมัดจำ' (SO)
+  itemNote?: string;
+  sequence?: number;
+  groupId?: string;
+  isAllocated: boolean;
+}
+
+export interface DeliveryGroup {
+  id: string;
+  groupName: string; // 'กรุ๊ป A', 'กรุ๊ป B'
+  routeId: string;
+  routeName: string; // 'สายใต้'
+  deliveryDate: string;
+  vehicleType: string;
+  vehicleCapacityKg: number;
+  driverName: string;
+  driverPhone: string;
+  orders: PlanningOrderItem[];
+  totalWeightKg: number;
+  status: 'draft' | 'approved' | 'sent';
+  warehouseInstructions: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  lineHandoff?: {
+    isSent: boolean;
+    sentAt?: string;
+    sentBy?: string;
+    targetGroupName?: string;
+    messageText?: string;
+  };
+}
+
+export interface LineSendHistoryItem {
+  id: string;
+  timestamp: string;
+  title: string;
+  action: string;
+  operator: string;
+  groupName: string;
+  routeName: string;
+  status: 'sent' | 'edited' | 'created';
+}

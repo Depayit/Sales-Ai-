@@ -33,6 +33,11 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, activeModule = 
       title: '05 ยืนยันคำสั่งซื้อ + จัดทำ PO ภายใน + รวบรวมออเดอร์',
       sub: 'Phase 1 : Order Confirmation & Internal PO',
     },
+    '06': {
+      num: '06',
+      title: '06 สรุปออเดอร์และแผนจัดรถให้คลัง (Manager Planning & Warehouse Plan)',
+      sub: 'Phase 1 : AI Autonomous + Human Approval | Manager Decision Rights',
+    },
   }[activeModule] || {
     num: activeModule,
     title: `โมดูล ${activeModule}`,

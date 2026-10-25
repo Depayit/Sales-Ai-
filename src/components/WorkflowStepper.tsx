@@ -15,7 +15,7 @@ const STEPS: StepperStep[] = [
   { step: '03', title: 'นำเสนอสินค้า & สื่อ', sub: 'รูปภาพ/ราคา/แคมเปญ', status: 'upcoming' },
   { step: '04', title: 'แจ้งเงื่อนไขการค้า', sub: 'เปิดรหัสลูกค้า (CV)', status: 'upcoming' },
   { step: '05', title: 'ยืนยันคำสั่งซื้อ', sub: 'จัดทำ PO ภายใน', status: 'upcoming' },
-  { step: '06', title: 'ส่งให้ทีมขาย', sub: 'วางแผนจัดส่ง', status: 'upcoming' },
+  { step: '06', title: 'สรุปออเดอร์ & แผนจัดรถ', sub: 'วางแผนจัดส่ง & คลัง', status: 'upcoming' },
 ];
 
 interface WorkflowStepperProps {

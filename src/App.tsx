@@ -9,6 +9,7 @@ import { Module02Qualification } from './components/Module02Qualification';
 import { Module03Presentation } from './components/Module03Presentation';
 import { Module04TradingTerms } from './components/Module04TradingTerms';
 import { Module05OrderPO } from './components/Module05OrderPO';
+import { Module06ManagerPlanning } from './components/Module06ManagerPlanning';
 import { DemoModal } from './components/DemoModal';
 import { MOCK_CUSTOMERS } from './mockData';
 import type {
@@ -21,7 +22,7 @@ import type {
 } from './types';
 
 export const App: React.FC = () => {
-  const [activeModule, setActiveModule] = useState<string>('05');
+  const [activeModule, setActiveModule] = useState<string>('06');
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('cust-1');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -73,7 +74,7 @@ export const App: React.FC = () => {
   };
 
   const handleSelectModule = (moduleId: string) => {
-    if (['01', '02', '03', '04', '05'].includes(moduleId)) {
+    if (['01', '02', '03', '04', '05', '06'].includes(moduleId)) {
       setActiveModule(moduleId);
     } else {
       setModalState({
@@ -271,7 +272,7 @@ export const App: React.FC = () => {
         <WorkflowStepper
           currentStep={activeModule}
           onStepClick={(step) => {
-            if (['01', '02', '03', '04', '05'].includes(step)) {
+            if (['01', '02', '03', '04', '05', '06'].includes(step)) {
               setActiveModule(step);
             } else {
               setModalState({
@@ -387,6 +388,16 @@ export const App: React.FC = () => {
               customer={selectedCustomer}
               customers={customers}
               onSelectCustomer={handleSelectCustomer}
+              onNavigateToModule={handleSelectModule}
+            />
+          </main>
+        )}
+
+        {activeModule === '06' && (
+          <main className="flex-1 flex overflow-hidden min-h-0 bg-slate-100 relative">
+            <Module06ManagerPlanning
+              customer={selectedCustomer}
+              customers={customers}
               onNavigateToModule={handleSelectModule}
             />
           </main>
