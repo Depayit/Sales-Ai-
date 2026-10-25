@@ -38,7 +38,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortTitle: '01 รับลูกค้า',
       sub: 'AI Lead Reception',
       icon: Inbox,
-      badge: 'Active',
+      badge: activeModule === '01' ? 'Active' : 'เสร็จแล้ว',
     },
     {
       id: '02',
@@ -46,7 +46,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortTitle: '02 คัดกรอง',
       sub: 'AI Lead Qualification',
       icon: UserCheck,
-      badge: 'ถัดไป',
+      badge: activeModule === '02' ? 'Active' : 'พร้อมใช้งาน',
     },
     {
       id: '03',
@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       shortTitle: '03 สินค้า/สื่อ',
       sub: 'AI Product Presentation',
       icon: ShoppingBag,
-      badge: '',
+      badge: activeModule === '03' ? 'Active' : 'โมดูล 03',
     },
     {
       id: '04',

@@ -27,12 +27,15 @@ export const WorkflowStepper: React.FC<WorkflowStepperProps> = ({
   currentStep = '01',
   onStepClick,
 }) => {
+  const currentStepNum = parseInt(currentStep, 10);
+
   return (
     <div className="py-2 px-4 bg-slate-50 border-b border-slate-200 overflow-x-auto shrink-0 select-none">
       <div className="flex items-center min-w-max gap-1">
         {STEPS.map((s, idx) => {
+          const stepNum = parseInt(s.step, 10);
           const isCurrent = s.step === currentStep;
-          const isCompleted = s.status === 'completed' && !isCurrent;
+          const isCompleted = stepNum < currentStepNum;
 
           return (
             <React.Fragment key={s.step}>

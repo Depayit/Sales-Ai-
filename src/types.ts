@@ -4,6 +4,9 @@ export type CustomerStatus = 'ai' | 'sales' | 'out_of_route' | 'cv_done';
 
 export type FilterTab = 'all' | 'ai' | 'pending';
 
+export type MediaApprovalMode = 'MODE_A' | 'MODE_B' | 'MODE_C';
+export type MediaApprovalStatus = 'approved' | 'pending' | 'rejected' | 'sales_only';
+
 export interface CustomerTag {
   id: string;
   label: string;
@@ -50,6 +53,70 @@ export interface ChatMessage {
   };
 }
 
+export interface ProductSKU {
+  id: string;
+  skuCode: string;
+  name: string;
+  subName: string;
+  category: string;
+  description: string;
+  packInfo: string;
+  unit: string;
+  weight: string;
+  imageUrl: string;
+  mediaGallery?: string[];
+  brochureUrl?: string;
+  standardPrices: PriceTier[];
+  customerSpecificPrice?: string;
+  approvalMode: MediaApprovalMode;
+  approvalStatus: MediaApprovalStatus;
+  matchScore?: number;
+  highlightNote?: string;
+}
+
+export interface Module02Qualification {
+  interestedSku: string;
+  expectedQty: string;
+  purpose: string;
+  orderFrequency: string;
+  urgentLevel: string;
+  aiScore: string;
+  confidence: number;
+  tags: string[];
+  routeFeasibility: string;
+  note: string;
+}
+
+export interface MediaHistoryItem {
+  id: string;
+  timestamp: string;
+  title: string;
+  mediaType: 'image' | 'pricing' | 'brochure' | 'quotation';
+  sender: 'ai' | 'sales';
+  status: 'sent' | 'pending' | 'failed';
+}
+
+export interface ApprovedMediaAsset {
+  id: string;
+  type: 'image' | 'brochure' | 'price_sheet' | 'link';
+  title: string;
+  desc: string;
+  url: string;
+  countLabel?: string;
+}
+
+export interface CampaignCustomer {
+  id: string;
+  name: string;
+  category: string;
+  aiScore: number;
+  rank: number;
+  reason: string;
+  recommendedProduct: string;
+  recommendedPrice: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
 export interface Customer {
   id: string;
   name: string;
@@ -77,6 +144,14 @@ export interface Customer {
   interestedProducts: InterestedProduct[];
   chatMessages: ChatMessage[];
   routeMapUrl?: string;
+  // Module 02 & 03 integrations:
+  qualification?: Module02Qualification;
+  mediaHistory?: MediaHistoryItem[];
+  pricingRights?: {
+    approvedMode: MediaApprovalMode;
+    allowDiscretion: boolean;
+    ruleText: string;
+  };
 }
 
 export interface WorkflowStep {

@@ -3,9 +3,37 @@ import { Bot, User, Menu } from 'lucide-react';
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
+  activeModule?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
+export const Header: React.FC<HeaderProps> = ({ onToggleSidebar, activeModule = '01' }) => {
+  const moduleInfo = {
+    '01': {
+      num: '01',
+      title: '01 รับลูกค้าและบันทึกข้อมูล',
+      sub: 'Phase 1 : AI Autonomous',
+    },
+    '02': {
+      num: '02',
+      title: '02 วิเคราะห์ความต้องการและคัดกรองลูกค้า',
+      sub: 'Phase 1 : AI Lead Qualification',
+    },
+    '03': {
+      num: '03',
+      title: '03 นำเสนอสินค้าและสื่อการขาย (AI Product Presentation)',
+      sub: 'Phase 1 : AI Autonomous + Media Approval',
+    },
+    '04': {
+      num: '04',
+      title: '04 แจ้งเงื่อนไขการค้าและเปิด CV',
+      sub: 'Phase 1 : Trading Terms & CV',
+    },
+  }[activeModule] || {
+    num: activeModule,
+    title: `โมดูล ${activeModule}`,
+    sub: 'Sales AI Automation OS',
+  };
+
   return (
     <header className="h-13 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0 z-20">
       {/* Left: Module Title & Phase Badge */}
@@ -22,14 +50,14 @@ export const Header: React.FC<HeaderProps> = ({ onToggleSidebar }) => {
 
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="w-7 h-7 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs shrink-0">
-            01
+            {moduleInfo.num}
           </div>
           <div className="flex items-center gap-2 truncate">
             <h1 className="text-sm font-bold text-slate-900 tracking-tight truncate">
-              01 รับลูกค้าและบันทึกข้อมูล
+              {moduleInfo.title}
             </h1>
             <span className="hidden sm:inline-flex items-center text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200/80 px-2 py-0.5 rounded-full shrink-0">
-              Phase 1 : AI Autonomous
+              {moduleInfo.sub}
             </span>
           </div>
         </div>

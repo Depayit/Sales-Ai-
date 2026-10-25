@@ -1,4 +1,10 @@
-import type { Customer, WorkflowStep } from './types';
+import type {
+  Customer,
+  WorkflowStep,
+  ProductSKU,
+  ApprovedMediaAsset,
+  CampaignCustomer,
+} from './types';
 
 export const WORKFLOW_STEPS: WorkflowStep[] = [
   {
@@ -96,6 +102,65 @@ export const MOCK_CUSTOMERS: Customer[] = [
         total: '34,000 บาท',
         date: '20 มี.ค. 2568',
         note: 'วันที่ต้องการส่งสินค้าเป็นวันที่ตรงกับตารางส่งประจำของเส้นทางนี้ จัดส่งโดยรถห้องเย็น มีรอบส่ง ขอนแก่น ทุกวันจันทร์ พุธ ศุกร์',
+      },
+    ],
+    qualification: {
+      interestedSku: 'เศษสามชั้น (หลัก) ทำหมูกรอบ',
+      expectedQty: '500 กก./ครั้ง',
+      purpose: 'ผลิตหมูกรอบจำหน่ายหน้าร้าน',
+      orderFrequency: 'ทุกสัปดาห์ (สั่งประจำ)',
+      urgentLevel: 'ปกติ (ต้องการรับ 20 มี.ค. 2568)',
+      aiScore: 'A - สูง',
+      confidence: 92,
+      tags: ['Route: R1 ขอนแก่น', 'หมูกรอบ', '500 กก.', 'ลูกค้าซื้อซ้ำ'],
+      routeFeasibility: 'อยู่ในพื้นที่จัดส่งประจำ (R1 - ขอนแก่น)',
+      note: 'สั่งประจำ ต้องการส่งตรงเวลา รถรอบเช้าก่อน 07:00 น.',
+    },
+    pricingRights: {
+      approvedMode: 'MODE_A',
+      allowDiscretion: false,
+      ruleText: 'เสนอราคาที่ได้รับอนุมัติใน Quotation Program เท่านั้น ห้ามปรับลดเองโดยไม่มีสิทธิ์',
+    },
+    mediaHistory: [
+      {
+        id: 'mh1',
+        timestamp: '10:05',
+        title: 'AI ส่งรูปสินค้า + ข้อมูล (เศษสามชั้น)',
+        mediaType: 'image',
+        sender: 'ai',
+        status: 'sent',
+      },
+      {
+        id: 'mh2',
+        timestamp: '09:15',
+        title: 'AI ส่งตารางราคาส่ง 500 กก. (68 บาท/กก.)',
+        mediaType: 'pricing',
+        sender: 'ai',
+        status: 'sent',
+      },
+      {
+        id: 'mh3',
+        timestamp: '3 มี.ค. 68',
+        title: 'AI ส่งตารางราคาโปรโมชั่น',
+        mediaType: 'pricing',
+        sender: 'ai',
+        status: 'sent',
+      },
+      {
+        id: 'mh4',
+        timestamp: '25 ก.พ. 68',
+        title: 'ส่งใบเสนอราคา (ตามคำขอ)',
+        mediaType: 'quotation',
+        sender: 'sales',
+        status: 'sent',
+      },
+      {
+        id: 'mh5',
+        timestamp: '20 ม.ค. 68',
+        title: 'เจรจาหน้าช็อป (ปิดการขาย)',
+        mediaType: 'quotation',
+        sender: 'sales',
+        status: 'failed',
       },
     ],
     chatMessages: [
@@ -596,3 +661,213 @@ export const MOCK_CUSTOMERS: Customer[] = [
     ],
   },
 ];
+
+export const MODULE_03_STATS = {
+  totalCustomers: '128',
+  totalCustomersDiff: '+12 วันนี้',
+  presentedCount: '96 / 75.0%',
+  mediaSentCount: '82 / 64.1%',
+  waitingReplyCount: '8 / 6.3%',
+  waitingSalesCount: '16 / 12.5%',
+  approvedAndSentCount: '28 / 21.9%',
+  totalQuotationAmount: '1.2M บาท (12 รายการ)',
+};
+
+export const MOCK_PRODUCTS: ProductSKU[] = [
+  {
+    id: 'prod-1',
+    skuCode: 'PORK-BELLY-01',
+    name: '1 เศษสามชั้น (สำหรับทำหมูกรอบ)',
+    subName: 'เศษสามชั้นเกรดสด หนาพิเศษ สัดส่วนเนื้อแดง 70% มัน 30%',
+    category: 'ชิ้นส่วนหมูสด / สามชั้น',
+    description: 'เศษสามชั้นตัดแต่งพิเศษ เหมาะสำหรับนำไปต้ม ทอดน้ำปลา หรือผลิตหมูกรอบ หนังบางกรอบ เนื้อนุ่มไม่เหนียว ได้มาตรฐานโรงเชือด A&C',
+    packInfo: 'ขนาดบรรจุ 2 กก. / ถุง, บรรจุลังละ 20 กก.',
+    unit: 'กก.',
+    weight: '20 กก./ลัง',
+    imageUrl: '/assets/pork_belly.jpg',
+    mediaGallery: [
+      '/assets/pork_belly.jpg',
+      '/assets/pork_belly.jpg',
+    ],
+    standardPrices: [
+      { range: '1 - 199 กก.', pricePerKg: 92 },
+      { range: '200 - 499 กก.', pricePerKg: 88 },
+      { range: '500 กก. ขึ้นไป', pricePerKg: 85 },
+    ],
+    customerSpecificPrice: '68 บาท/กก. (ราคาลูกค้าประจำ 500 กก.)',
+    approvalMode: 'MODE_A',
+    approvalStatus: 'approved',
+    matchScore: 98,
+    highlightNote: 'ตรงตามความต้องการทำหมูกรอบ สั่ง 500 กก./ครั้ง ได้ราคาส่งพร้อมส่งฟรี R1',
+  },
+  {
+    id: 'prod-2',
+    skuCode: 'PORK-COLLAR-02',
+    name: '2 สันคอหมู (สไลซ์/ชิ้น)',
+    subName: 'สันคอคัดเกรด ลายหินอ่อนแทรกไขมัน นุ่มชุ่มฉ่ำ',
+    category: 'ชิ้นส่วนหมูสด / สันคอ',
+    description: 'เนื้อสันคอหมูลายหินอ่อน เหมาะสำหรับร้านชาบู ปิ้งย่าง หรือสเต็ก สไลซ์ความหนาตามสั่ง 1.5 - 2 มม.',
+    packInfo: 'ขนาดบรรจุ 2 กก. / ถุงสูญญากาศ, ลังละ 10 กก.',
+    unit: 'กก.',
+    weight: '10 กก./ลัง',
+    imageUrl: '/assets/pork_belly.jpg',
+    standardPrices: [
+      { range: '1 - 199 กก.', pricePerKg: 145 },
+      { range: '200 - 499 กก.', pricePerKg: 140 },
+      { range: '500 กก. ขึ้นไป', pricePerKg: 135 },
+    ],
+    approvalMode: 'MODE_B',
+    approvalStatus: 'pending',
+    matchScore: 85,
+    highlightNote: 'สินค้าเสริมยอดนิยม ร่างข้อความและรอฝ่ายขายอนุมัติก่อนส่งให้ลูกค้า',
+  },
+  {
+    id: 'prod-3',
+    skuCode: 'PORK-LOIN-03',
+    name: '3 เนื้อสันนอก (หมูสด)',
+    subName: 'เนื้อสันนอกคัดเกรด นุ่ม ไร้ไขมันส่วนเกิน',
+    category: 'ชิ้นส่วนหมูสด / สันนอก',
+    description: 'เนื้อสันนอกเกรดส่งออก เหมาะสำหรับนำไปทำหมูแดง หมูกรอบ หรือสเต็กหมู ชิ้นใหญ่เต็มคำ',
+    packInfo: 'ชิ้นละ 4 - 5 กก., บรรจุลังละ 25 กก.',
+    unit: 'กก.',
+    weight: '25 กก./ลัง',
+    imageUrl: '/assets/pork_belly.jpg',
+    standardPrices: [
+      { range: '1 - 199 กก.', pricePerKg: 128 },
+      { range: '200 - 499 กก.', pricePerKg: 125 },
+      { range: '500 กก. ขึ้นไป', pricePerKg: 120 },
+    ],
+    approvalMode: 'MODE_C',
+    approvalStatus: 'sales_only',
+    matchScore: 72,
+    highlightNote: 'โหมด C: ฝ่ายขายต้องเป็นผู้ส่งสื่อและเจรจาราคาเอง AI ไม่มีสิทธิ์ส่งอัตโนมัติ',
+  },
+  {
+    id: 'prod-4',
+    skuCode: 'PORK-MINCED-04',
+    name: '4 เนื้อหมูบดอนามัย เกรด A',
+    subName: 'สัดส่วนเนื้อแดง 85% มัน 15% บดสดวันต่อวัน',
+    category: 'หมูแปรรูป / หมูบด',
+    description: 'เนื้อหมูบดคุณภาพสูง สะอาดปลอดภัย ไม่ผสมสารเร่งเนื้อแดง เหมาะสำหรับแปรรูปอาหาร ไส้เกี๊ยว หรือลูกชิ้น',
+    packInfo: 'ถุงละ 5 กก., ลังละ 20 กก.',
+    unit: 'กก.',
+    weight: '20 กก./ลัง',
+    imageUrl: '/assets/pork_belly.jpg',
+    standardPrices: [
+      { range: '1 - 199 กก.', pricePerKg: 98 },
+      { range: '200 - 499 กก.', pricePerKg: 95 },
+      { range: '500 กก. ขึ้นไป', pricePerKg: 92 },
+    ],
+    approvalMode: 'MODE_A',
+    approvalStatus: 'approved',
+    matchScore: 65,
+  },
+];
+
+export const APPROVED_MEDIA_ASSETS: ApprovedMediaAsset[] = [
+  {
+    id: 'med-1',
+    type: 'image',
+    title: 'รูปสินค้าจริง (4 รูป)',
+    desc: 'ภาพถ่ายสินค้าจริงความละเอียดสูงพร้อมขนาดเทียบ',
+    url: '/assets/pork_belly.jpg',
+    countLabel: '4 รูปภาพ',
+  },
+  {
+    id: 'med-2',
+    type: 'brochure',
+    title: 'โบรชัวร์สินค้า (PDF)',
+    desc: 'เอกสารข้อมูลสเปกสินค้าและมาตรฐานโรงงาน A&C',
+    url: '#brochure',
+    countLabel: 'PDF 1.2 MB',
+  },
+  {
+    id: 'med-3',
+    type: 'price_sheet',
+    title: 'ตารางราคาขายส่ง (PDF)',
+    desc: 'ตารางราคาอย่างเป็นทางการจาก Quotation Program',
+    url: '#pricesheet',
+    countLabel: 'PDF 450 KB',
+  },
+  {
+    id: 'med-4',
+    type: 'link',
+    title: 'ลิงก์แคตตาล็อกออนไลน์',
+    desc: 'https://catalog.acfoods.co.th/wholesale',
+    url: 'https://catalog.acfoods.co.th',
+    countLabel: 'เว็บไซต์',
+  },
+];
+
+export const MOCK_CAMPAIGN_DATA: {
+  productName: string;
+  period: string;
+  segmentName: string;
+  estimatedReach: number;
+  sampleMessage: string;
+  targets: CampaignCustomer[];
+} = {
+  productName: 'เศษสามชั้น 200 กก. ขึ้นไป',
+  period: '1 - 31 มี.ค. 2569',
+  segmentName: 'เคยซื้อหมูสามชั้น / เนื้อไก่สด แต่ไม่ได้ซื้อใน 30 วันล่าสุด',
+  estimatedReach: 24,
+  sampleMessage:
+    'สวัสดีครับคุณสมบูรณ์ ช่วงนี้มีโปรโมชั่นพิเศษ หมูสามชั้นเกรดพรีเมียม สดสะอาด มาตรฐานส่งตรงจากโรงเชือด ราคาเพียง 68 บาท/กก. (จากปกติ 88 บาท) เมื่อสั่ง 500 กก. ขึ้นไป ส่งฟรีตามรอบสายจัดส่ง R1 ถึงหน้าร้านครับ',
+  targets: [
+    {
+      id: 'cmp-1',
+      name: 'ร้านโคตรหมูกรอบ',
+      category: 'ร้านอาหาร / สาขาพระราม 9',
+      aiScore: 92,
+      rank: 1,
+      reason: 'สั่งหมูสามชั้นประจำ 500 กก./สัปดาห์ เว้นสั่งไป 14 วัน',
+      recommendedProduct: 'เศษสามชั้น',
+      recommendedPrice: '45 บาท/กก. (ราคาปกติ 48 บาท/กก.)',
+      status: 'pending' as const,
+    },
+    {
+      id: 'cmp-2',
+      name: 'ร้านเจริญพร',
+      category: 'ร้านอาหาร / ขอนแก่น',
+      aiScore: 85,
+      rank: 2,
+      reason: 'รอบส่ง R1 ผ่านหน้าร้านทุก จ./พ./ศ. ตรงรอบ',
+      recommendedProduct: 'เศษสามชั้น',
+      recommendedPrice: '68 บาท/กก. (จากปกติ 85 บาท/กก.)',
+      status: 'pending' as const,
+    },
+    {
+      id: 'cmp-3',
+      name: 'ร้านรุ่งอรุณ',
+      category: 'ร้านอาหาร / รังสิต',
+      aiScore: 78,
+      rank: 3,
+      reason: 'เคยซื้อสินค้าทดแทน สั่งสะโพกแต่มีความต้องการสามชั้น',
+      recommendedProduct: 'เศษสามชั้น',
+      recommendedPrice: '70 บาท/กก.',
+      status: 'pending' as const,
+    },
+    {
+      id: 'cmp-4',
+      name: 'โรงงานหมูดี',
+      category: 'โรงงานแปรรูป / พระประแดง',
+      aiScore: 72,
+      rank: 4,
+      reason: 'สั่งซื้อแบบเหมาล็อต ปริมาณ 1,000 กก. ขึ้นไป',
+      recommendedProduct: 'เศษสามชั้น',
+      recommendedPrice: '65 บาท/กก.',
+      status: 'pending' as const,
+    },
+    {
+      id: 'cmp-5',
+      name: 'ร้านสยามฟู้ดส์',
+      category: 'ร้านอาหาร / กทม.',
+      aiScore: 68,
+      rank: 5,
+      reason: 'ลูกค้าเก่า เว้นช่วงมากกว่า 45 วัน',
+      recommendedProduct: 'เศษสามชั้น',
+      recommendedPrice: '72 บาท/กก.',
+      status: 'pending' as const,
+    },
+  ],
+};
