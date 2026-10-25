@@ -13,7 +13,13 @@ import { Module06ManagerPlanning } from './components/Module06ManagerPlanning';
 import { DemoModal } from './components/DemoModal';
 import { DecisionRightsModal } from './components/DecisionRightsModal';
 import { ChatSandboxModal } from './components/ChatSandboxModal';
-import { MOCK_CUSTOMERS } from './mockData';
+import {
+  MOCK_CUSTOMERS,
+  MOCK_ORDERS,
+  MOCK_SALES_PLANS,
+  MOCK_DELIVERY_GROUPS,
+  MOCK_LINE_HISTORY,
+} from './mockData';
 import type {
   Customer,
   FilterTab,
@@ -21,12 +27,20 @@ import type {
   ChatMessage,
   MediaHistoryItem,
   CVRegistrationRecord,
+  OrderRecord,
+  SalesPlanSummary,
+  DeliveryGroup,
+  LineSendHistoryItem,
 } from './types';
 
 export const App: React.FC = () => {
-  const [activeModule, setActiveModule] = useState<string>('06');
+  const [activeModule, setActiveModule] = useState<string>('01');
   const [customers, setCustomers] = useState<Customer[]>(MOCK_CUSTOMERS);
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('cust-1');
+  const [orders, setOrders] = useState<OrderRecord[]>(MOCK_ORDERS);
+  const [salesPlans, setSalesPlans] = useState<SalesPlanSummary[]>(MOCK_SALES_PLANS);
+  const [deliveryGroups, setDeliveryGroups] = useState<DeliveryGroup[]>(MOCK_DELIVERY_GROUPS);
+  const [sendHistory, setSendHistory] = useState<LineSendHistoryItem[]>(MOCK_LINE_HISTORY);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
@@ -399,6 +413,10 @@ export const App: React.FC = () => {
               customers={customers}
               onSelectCustomer={handleSelectCustomer}
               onNavigateToModule={handleSelectModule}
+              orders={orders}
+              onUpdateOrders={setOrders}
+              salesPlans={salesPlans}
+              onUpdateSalesPlans={setSalesPlans}
             />
           </main>
         )}
@@ -409,6 +427,10 @@ export const App: React.FC = () => {
               customer={selectedCustomer}
               customers={customers}
               onNavigateToModule={handleSelectModule}
+              deliveryGroups={deliveryGroups}
+              onUpdateDeliveryGroups={setDeliveryGroups}
+              sendHistory={sendHistory}
+              onUpdateSendHistory={setSendHistory}
             />
           </main>
         )}

@@ -37,10 +37,18 @@ interface Module06ManagerPlanningProps {
   customer: Customer;
   customers: Customer[];
   onNavigateToModule: (moduleId: string) => void;
+  deliveryGroups?: DeliveryGroup[];
+  onUpdateDeliveryGroups?: React.Dispatch<React.SetStateAction<DeliveryGroup[]>>;
+  sendHistory?: LineSendHistoryItem[];
+  onUpdateSendHistory?: React.Dispatch<React.SetStateAction<LineSendHistoryItem[]>>;
 }
 
 export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = ({
   onNavigateToModule,
+  deliveryGroups: propDeliveryGroups,
+  onUpdateDeliveryGroups,
+  sendHistory: propSendHistory,
+  onUpdateSendHistory,
 }) => {
   // Navigation mini-stepper state
   const [activeMiniStep, setActiveMiniStep] = useState<number>(1);
@@ -62,7 +70,9 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
   const [selectedOrderIds, setSelectedOrderIds] = useState<string[]>([]);
 
   // Delivery Groups State (Column 3 & 4)
-  const [deliveryGroups, setDeliveryGroups] = useState<DeliveryGroup[]>(MOCK_DELIVERY_GROUPS);
+  const [internalGroups, setInternalGroups] = useState<DeliveryGroup[]>(MOCK_DELIVERY_GROUPS);
+  const deliveryGroups = propDeliveryGroups ?? internalGroups;
+  const setDeliveryGroups = onUpdateDeliveryGroups ?? setInternalGroups;
 
   // Column 2 Subtab
   const [col2Tab, setCol2Tab] = useState<'routes' | 'plans'>('routes');
@@ -77,7 +87,9 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
   const [col6Tab, setCol6Tab] = useState<'by_route' | 'by_status'>('by_route');
 
   // Send History
-  const [sendHistory, setSendHistory] = useState<LineSendHistoryItem[]>(MOCK_LINE_HISTORY);
+  const [internalHistory, setInternalHistory] = useState<LineSendHistoryItem[]>(MOCK_LINE_HISTORY);
+  const sendHistory = propSendHistory ?? internalHistory;
+  const setSendHistory = onUpdateSendHistory ?? setInternalHistory;
 
   // Modals state
   const [routeMasterModal, setRouteMasterModal] = useState<boolean>(false);

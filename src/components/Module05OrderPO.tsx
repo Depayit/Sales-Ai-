@@ -38,6 +38,10 @@ interface Module05OrderPOProps {
   customers: Customer[];
   onSelectCustomer: (cust: Customer) => void;
   onNavigateToModule: (moduleId: string) => void;
+  orders?: OrderRecord[];
+  onUpdateOrders?: React.Dispatch<React.SetStateAction<OrderRecord[]>>;
+  salesPlans?: SalesPlanSummary[];
+  onUpdateSalesPlans?: React.Dispatch<React.SetStateAction<SalesPlanSummary[]>>;
 }
 
 export const Module05OrderPO: React.FC<Module05OrderPOProps> = ({
@@ -45,14 +49,21 @@ export const Module05OrderPO: React.FC<Module05OrderPOProps> = ({
   customers,
   onSelectCustomer,
   onNavigateToModule,
+  orders: propOrders,
+  onUpdateOrders,
+  salesPlans: propSalesPlans,
+  onUpdateSalesPlans,
 }) => {
   // Mode switcher: Tab 1 (Order Confirmation & Internal PO) vs Tab 2 (Sales Plan Consolidation)
   const [activeTab, setActiveTab] = useState<'orders' | 'sales_plan'>('orders');
 
-  // Orders State
-  const [orders, setOrders] = useState<OrderRecord[]>(MOCK_ORDERS);
+  // Orders State (use props if provided to preserve state across module navigation)
+  const [internalOrders, setInternalOrders] = useState<OrderRecord[]>(MOCK_ORDERS);
+  const orders = propOrders ?? internalOrders;
+  const setOrders = onUpdateOrders ?? setInternalOrders;
+
   const [selectedOrderId, setSelectedOrderId] = useState<string>(
-    MOCK_ORDERS.find((o) => o.customerId === customer.id)?.id || MOCK_ORDERS[0].id
+    orders.find((o) => o.customerId === customer.id)?.id || orders[0].id
   );
 
   // Search and Filters
@@ -61,7 +72,9 @@ export const Module05OrderPO: React.FC<Module05OrderPOProps> = ({
 
   // Sales Plan State (Separate A&C vs TD)
   const [salesPlanCompany, setSalesPlanCompany] = useState<CompanyCode>('AC');
-  const [salesPlans, setSalesPlans] = useState<SalesPlanSummary[]>(MOCK_SALES_PLANS);
+  const [internalSalesPlans, setInternalSalesPlans] = useState<SalesPlanSummary[]>(MOCK_SALES_PLANS);
+  const salesPlans = propSalesPlans ?? internalSalesPlans;
+  const setSalesPlans = onUpdateSalesPlans ?? setInternalSalesPlans;
 
   // Modals
   const [mobilePreviewModal, setMobilePreviewModal] = useState<boolean>(false);
