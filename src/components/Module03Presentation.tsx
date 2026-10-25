@@ -173,8 +173,8 @@ export const Module03Presentation: React.FC<Module03PresentationProps> = ({
            VIEW 1: Standard AI Product Presentation (3-Column Layout from Slide 14)
            ========================================================================= */
         <div className="flex-1 flex overflow-hidden min-h-0">
-          {/* Column 1: Customer Selection List (w-72 or responsive) */}
-          <div className="w-72 bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-hidden">
+          {/* Column 1: Customer Selection List (Standardized w-80) */}
+          <div className="w-80 bg-white border-r border-slate-200 flex flex-col shrink-0 overflow-hidden">
             <div className="p-3 border-b border-slate-200 space-y-2 bg-slate-50/50">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-slate-800">

@@ -442,9 +442,9 @@ export const Module05OrderPO: React.FC<Module05OrderPOProps> = ({
       {activeTab === 'orders' && (
         <div className="flex-1 flex overflow-hidden min-h-0">
           {/* ========================================================= */}
-          {/* LEFT COLUMN: Order Management List (w-76 xl:w-80)         */}
+          {/* LEFT COLUMN: Order Management List (Standardized w-80)   */}
           {/* ========================================================= */}
-          <div className="w-76 xl:w-80 h-full border-r border-slate-200 bg-white flex flex-col shrink-0">
+          <div className="w-80 h-full border-r border-slate-200 bg-white flex flex-col shrink-0">
             <div className="p-3 border-b border-slate-200">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-bold text-slate-800">
@@ -927,9 +927,9 @@ export const Module05OrderPO: React.FC<Module05OrderPOProps> = ({
           </div>
 
           {/* ========================================================= */}
-          {/* RIGHT COLUMN: Internal PO Workspace (w-80 xl:w-88)        */}
+          {/* RIGHT COLUMN: Internal PO Workspace (Standardized w-88 xl:w-96) */}
           {/* ========================================================= */}
-          <div className="w-80 xl:w-88 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-4">
+          <div className="w-88 xl:w-96 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-4">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-xs font-bold text-slate-900">

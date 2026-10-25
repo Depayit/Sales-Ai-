@@ -112,56 +112,30 @@ export const Module02Qualification: React.FC<Module02QualificationProps> = ({
 
   return (
     <div className="flex-1 flex flex-col h-full bg-slate-100 overflow-hidden select-none">
-      {/* 1. TOP STATS BAR (Strictly from Slide 9) */}
-      <div className="bg-white border-b border-slate-200 px-4 py-2.5 shrink-0 shadow-2xs">
-        <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-2">
-          {/* Main Module Identity & KPI Badges */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600 text-white font-bold text-xs flex items-center justify-center shadow-xs">
-              02
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-sm font-bold text-slate-900 tracking-tight">
-                  02 วิเคราะห์ความต้องการและคัดกรองลูกค้า (AI Lead Qualification)
-                </h2>
-                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
-                  AI Autonomous + Human Approval
-                </span>
-                <span className="text-[10px] font-semibold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full hidden sm:inline-block">
-                  เชื่อมต่อ LINE OA • สรุปอัตโนมัติ
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                วิเคราะห์ความต้องการและจัดกลุ่ม Lead จากบทสนทนา เพื่อกำหนดข้อมูลที่ต้องถามต่อและส่งต่อทีมขาย (Slide 8-12)
-              </p>
-            </div>
-          </div>
-
-          {/* Key KPI Stats Counter Grid (Slide 9 Top Stats) */}
-          <div className="flex items-center gap-1.5 overflow-x-auto text-xs py-0.5">
-            <div className="px-2.5 py-1 bg-slate-50 rounded-lg border border-slate-200 text-center shrink-0">
-              <span className="text-[10px] text-slate-400 font-semibold block">ลูกค้าทั้งหมด</span>
-              <span className="font-bold text-slate-900">
-                {MODULE_02_STATS.totalLeads} <strong className="text-emerald-600 text-[10px] font-normal">{MODULE_02_STATS.totalLeadsDiff}</strong>
+      {/* 1. TOP STATS BAR & VIEW SWITCHER (Slide 9 & 10) */}
+      <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+          {/* Key KPI Stats Chips */}
+          <div className="flex items-center gap-1.5 overflow-x-auto text-[11px] min-w-0 py-0.5">
+            <div className="bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-lg shrink-0 flex items-center gap-1.5">
+              <span className="text-slate-500 font-medium">ลูกค้าทั้งหมด:</span>
+              <span className="font-bold text-slate-800">{MODULE_02_STATS.totalLeads}</span>
+              <span className="text-emerald-600 font-semibold text-[10px]">
+                {MODULE_02_STATS.totalLeadsDiff}
               </span>
             </div>
 
-            <div className="px-2.5 py-1 bg-blue-50 rounded-lg border border-blue-200 text-center shrink-0">
-              <span className="text-[10px] text-blue-600 font-semibold block">AI ดูแล</span>
-              <span className="font-bold text-blue-900">
-                {MODULE_02_STATS.aiHandledCount} <span className="text-[10px] text-blue-600">({MODULE_02_STATS.aiHandledPercent})</span>
-              </span>
+            <div className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg shrink-0 text-blue-800 font-semibold">
+              <span className="text-blue-600 font-medium">AI ดูแล:</span>{' '}
+              <span>{MODULE_02_STATS.aiHandledCount} ({MODULE_02_STATS.aiHandledPercent})</span>
             </div>
 
-            <div className="px-2.5 py-1 bg-purple-50 rounded-lg border border-purple-200 text-center shrink-0">
-              <span className="text-[10px] text-purple-600 font-semibold block">เซลล์ตอบ</span>
-              <span className="font-bold text-purple-900">
-                {MODULE_02_STATS.salesHandledCount} <span className="text-[10px] text-purple-600">({MODULE_02_STATS.salesHandledPercent})</span>
-              </span>
+            <div className="bg-purple-50 border border-purple-200 px-2.5 py-1 rounded-lg shrink-0 text-purple-800 font-semibold">
+              <span className="text-purple-600 font-medium">เซลล์ตอบ:</span>{' '}
+              <span>{MODULE_02_STATS.salesHandledCount} ({MODULE_02_STATS.salesHandledPercent})</span>
             </div>
 
-            <div className="hidden md:flex items-center gap-1 shrink-0 pl-1">
+            <div className="hidden xl:flex items-center gap-1 shrink-0 pl-1">
               <span className="text-[10px] font-semibold px-2 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600">
                 ลูกค้าใหม่: <strong className="text-slate-800">{MODULE_02_STATS.newLeadsCount}</strong>
               </span>
@@ -171,53 +145,51 @@ export const Module02Qualification: React.FC<Module02QualificationProps> = ({
               <span className="text-[10px] font-semibold px-2 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600">
                 รอเช็กสต็อก: <strong className="text-slate-800">{MODULE_02_STATS.checkingStockCount}</strong>
               </span>
-              <span className="text-[10px] font-semibold px-2 py-1 rounded bg-slate-100 border border-slate-200 text-slate-600">
-                สั่งซื้อสำเร็จ: <strong className="text-emerald-700">{MODULE_02_STATS.orderedCount}</strong>
+              <span className="text-[10px] font-semibold px-2 py-1 rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                สั่งซื้อสำเร็จ: <strong>{MODULE_02_STATS.orderedCount}</strong>
               </span>
               <span className="text-[10px] font-semibold px-2 py-1 rounded bg-rose-50 border border-rose-200 text-rose-700">
                 นอกเส้นทาง: <strong>{MODULE_02_STATS.outOfRouteCount}</strong>
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Sub-view Switcher Tabs */}
-        <div className="flex items-center justify-between border-t border-slate-100 pt-2 mt-2">
-          <div className="flex items-center gap-2 text-xs font-bold">
-            <button
-              onClick={() => setActiveTab('qualification')}
-              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                activeTab === 'qualification'
-                  ? 'bg-blue-600 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              <CheckCircle2 size={13} />
-              <span>1. คัดกรองและประเมิน Lead (Lead Qualification Form)</span>
-            </button>
+          {/* Sub-view Switcher & Action Button */}
+          <div className="flex items-center gap-2 self-start lg:self-center shrink-0">
+            <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg text-xs font-bold border border-slate-200">
+              <button
+                onClick={() => setActiveTab('qualification')}
+                className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                  activeTab === 'qualification'
+                    ? 'bg-white text-blue-700 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <CheckCircle2 size={13} />
+                <span>1. คัดกรองและประเมิน Lead</span>
+              </button>
 
-            <button
-              onClick={() => setActiveTab('buying_dna')}
-              className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 ${
-                activeTab === 'buying_dna'
-                  ? 'bg-blue-600 text-white shadow-2xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              <Sparkles size={13} />
-              <span>2. Buying DNA & Sales Opportunity (Customer Insight)</span>
-              <span className="text-[9px] bg-amber-400 text-slate-900 px-1.5 py-0.2 rounded-full font-bold">
-                ใหม่
-              </span>
-            </button>
-          </div>
+              <button
+                onClick={() => setActiveTab('buying_dna')}
+                className={`px-3 py-1.5 rounded-md transition-all flex items-center gap-1.5 ${
+                  activeTab === 'buying_dna'
+                    ? 'bg-white text-purple-700 font-bold shadow-2xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Sparkles size={13} className="text-purple-600" />
+                <span>2. Buying DNA & Opportunity</span>
+                <span className="text-[9px] bg-amber-400 text-slate-900 px-1.5 py-0.2 rounded-full font-bold">
+                  ใหม่
+                </span>
+              </button>
+            </div>
 
-          <div className="flex items-center gap-2">
             <button
               onClick={onNavigateToModule03}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs"
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition-all shadow-xs shrink-0"
             >
-              <span>ส่งต่อไปโมดูล 03 เสนอสินค้าและราคา</span>
+              <span>ส่งต่อไปโมดูล 03</span>
               <ArrowRight size={13} />
             </button>
           </div>

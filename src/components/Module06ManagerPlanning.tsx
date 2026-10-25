@@ -14,7 +14,6 @@ import {
   MapPin,
   Settings,
   SlidersHorizontal,
-  Info,
 } from 'lucide-react';
 import type {
   Customer,
@@ -407,67 +406,73 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
       {/* ========================================================= */}
       {/* TOP HEADER: Module Title, Manager Profile & Stats Bar    */}
       {/* ========================================================= */}
-      <div className="bg-white border-b border-slate-200 px-4 py-2.5 shrink-0 space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 text-[10px] font-bold">
-                Phase 1 · AI Autonomous + Human Approval
-              </span>
-              <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 text-[10px] font-bold">
-                Manager Decision Rights (Slide 25 & 29)
-              </span>
+      {/* ========================================================= */}
+      {/* TOP TOOLBAR: Manager Controls, Quick Actions & Pipeline   */}
+      {/* ========================================================= */}
+      <div className="bg-white border-b border-slate-200 px-4 py-2 shrink-0 space-y-2 shadow-2xs">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+          {/* Left: Summary Metrics Chips & Company Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto text-[11px] min-w-0 py-0.5">
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-lg border border-slate-200 shrink-0">
+              <span className="text-slate-500 font-medium">บริษัท:</span>
+              <div className="flex items-center bg-slate-200/70 p-0.5 rounded-md">
+                <button
+                  onClick={() => setCompanyFilter('ALL')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    companyFilter === 'ALL'
+                      ? 'bg-white text-blue-700 shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  ทั้งหมด
+                </button>
+                <button
+                  onClick={() => setCompanyFilter('AC')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    companyFilter === 'AC'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  A&C
+                </button>
+                <button
+                  onClick={() => setCompanyFilter('TD')}
+                  className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${
+                    companyFilter === 'TD'
+                      ? 'bg-blue-600 text-white shadow-2xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  TD
+                </button>
+              </div>
             </div>
-            <h1 className="text-base font-bold text-slate-900 mt-0.5 flex items-center gap-2">
-              <span>06 แผนจัดรถ + แผนห้องเย็น/คลัง (จัดส่งเป็นกรุ๊ปตามสาย)</span>
-              <span className="text-xs font-normal text-slate-500">
-                Manager Planning & Warehouse Plan (JD 06)
-              </span>
-            </h1>
+
+            <div className="bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg shrink-0 text-blue-900 font-semibold flex items-center gap-1.5">
+              <span className="text-blue-600 font-medium">ออเดอร์รวม:</span>
+              <span className="font-bold">{MODULE_06_STATS.totalOrders} รายการ</span>
+            </div>
+
+            <div className="bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0 text-emerald-900 font-semibold flex items-center gap-1.5">
+              <span className="text-emerald-600 font-medium">น้ำหนักรวม:</span>
+              <span className="font-bold font-mono">{MODULE_06_STATS.totalWeightKg.toLocaleString()} กก.</span>
+            </div>
+
+            <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 border border-purple-200 rounded-lg shrink-0 text-purple-900 text-[10px] font-bold">
+              <ShieldCheck size={12} className="text-purple-600" />
+              <span>Manager Decision Rights (Slide 29)</span>
+            </div>
           </div>
 
-          {/* Quick stats pills */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-lg border border-slate-200 text-xs">
-              <span className="text-slate-500">บริษัท:</span>
-              <button
-                onClick={() => setCompanyFilter('ALL')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
-                  companyFilter === 'ALL'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                ทั้งหมด
-              </button>
-              <button
-                onClick={() => setCompanyFilter('AC')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
-                  companyFilter === 'AC'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                A&C
-              </button>
-              <button
-                onClick={() => setCompanyFilter('TD')}
-                className={`px-2 py-0.5 rounded text-[11px] font-bold transition-all ${
-                  companyFilter === 'TD'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                TD
-              </button>
-            </div>
-
+          {/* Right: Quick Action Buttons */}
+          <div className="flex items-center gap-2 self-start lg:self-center shrink-0">
             <button
               onClick={() => setRouteMasterModal(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 hover:border-blue-400 text-slate-700 hover:text-blue-700 rounded-lg text-xs font-bold shadow-2xs transition-all"
             >
               <Settings size={13} className="text-slate-500" />
-              <span>Route & Cut-off Master (Slide 27)</span>
+              <span>Route & Cut-off Master</span>
             </button>
 
             <button
@@ -475,7 +480,7 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
               className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 hover:bg-amber-100 text-amber-800 rounded-lg text-xs font-bold shadow-2xs transition-all"
             >
               <SlidersHorizontal size={13} className="text-amber-700" />
-              <span>ระบบจัดสรรออเดอร์ (เกลี่ยยอด)</span>
+              <span>จัดสรรออเดอร์ (เกลี่ยยอด)</span>
             </button>
 
             <button
@@ -487,24 +492,8 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
           </div>
         </div>
 
-        {/* Objective banner from Slide 26 */}
-        <div className="p-2 rounded-lg bg-blue-50/80 border border-blue-200 flex items-start gap-2.5 text-xs text-blue-950">
-          <Info size={16} className="text-blue-600 shrink-0 mt-0.5" />
-          <div className="flex-1 min-w-0 leading-relaxed text-[11px]">
-            <span className="font-bold text-blue-900">วัตถุประสงค์ระบบจัดส่ง: </span>
-            วางแผนจัดส่งหลายวัน จัดกลุ่มการจัดส่งตามสาย (Delivery Group) โดยผูกคนขับประจำสาย
-            เป็นค่าเริ่มต้น สามารถมีหลายรถ/หลายกรุ๊ปในสายเดียวกัน ตรวจสอบและอนุมัติ
-            และส่งแผนให้คลังผ่าน LINE
-          </div>
-          <div className="shrink-0 flex items-center gap-3 text-[11px] font-mono font-bold text-slate-700 bg-white/80 px-2 py-1 rounded border border-blue-100">
-            <span>ออเดอร์รวม: {MODULE_06_STATS.totalOrders} รายการ</span>
-            <span>|</span>
-            <span>น้ำหนัก: {MODULE_06_STATS.totalWeightKg.toLocaleString()} กก.</span>
-          </div>
-        </div>
-
         {/* Mini 6-step Workflow Pipeline from Slide 26 */}
-        <div className="flex items-center gap-1 overflow-x-auto pt-1 pb-0.5 text-xs">
+        <div className="flex items-center gap-1.5 overflow-x-auto pt-0.5 text-xs">
           {[
             { num: 1, title: 'เลือกออเดอร์', sub: 'PO พร้อมส่ง + คาดการณ์' },
             { num: 2, title: 'เลือกสายและวันที่', sub: 'คนขับประจำสาย' },
@@ -516,14 +505,14 @@ export const Module06ManagerPlanning: React.FC<Module06ManagerPlanningProps> = (
             <button
               key={s.num}
               onClick={() => setActiveMiniStep(s.num)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-left shrink-0 transition-all ${
+              className={`flex items-center gap-2 px-2.5 py-1 rounded-lg border text-left shrink-0 transition-all ${
                 activeMiniStep === s.num
                   ? 'bg-blue-600 text-white border-blue-600 shadow-2xs font-semibold'
                   : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'
               }`}
             >
               <span
-                className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                className={`w-4.5 h-4.5 rounded-full flex items-center justify-center text-[10px] font-bold ${
                   activeMiniStep === s.num ? 'bg-white text-blue-600' : 'bg-slate-100 text-slate-600'
                 }`}
               >

@@ -459,9 +459,9 @@ export const Module04TradingTerms: React.FC<Module04TradingTermsProps> = ({
       {/* Main 3-Column Layout */}
       <div className="flex-1 flex overflow-hidden min-h-0">
         {/* ========================================================= */}
-        {/* LEFT COLUMN: Customer List (w-72 or w-80)                */}
+        {/* LEFT COLUMN: Customer List (Standardized w-80)           */}
         {/* ========================================================= */}
-        <div className="w-76 xl:w-80 h-full border-r border-slate-200 bg-white flex flex-col shrink-0">
+        <div className="w-80 h-full border-r border-slate-200 bg-white flex flex-col shrink-0">
           <div className="p-3 border-b border-slate-200">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs font-bold text-slate-800">
@@ -959,8 +959,8 @@ export const Module04TradingTerms: React.FC<Module04TradingTermsProps> = ({
               </div>
             </div>
 
-            {/* Right: Registration & Documents Panel (Slide 18 Image 1) */}
-            <div className="w-80 xl:w-88 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-3.5">
+            {/* Right: Registration & Documents Panel (Standardized w-88 xl:w-96) */}
+            <div className="w-88 xl:w-96 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-3.5">
               {/* Header & Status */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
@@ -1506,8 +1506,8 @@ export const Module04TradingTerms: React.FC<Module04TradingTermsProps> = ({
               </div>
             </div>
 
-            {/* Right: LINE Summary Preview & Progress (Slide 18 Image 2) */}
-            <div className="w-80 xl:w-88 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-4">
+            {/* Right: LINE Summary Preview & Progress (Standardized w-88 xl:w-96) */}
+            <div className="w-88 xl:w-96 h-full bg-white border-l border-slate-200 flex flex-col overflow-y-auto shrink-0 p-3.5 space-y-4">
               {/* LINE Message Summary Card */}
               <div>
                 <div className="flex items-center justify-between mb-2">
